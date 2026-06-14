@@ -37,7 +37,7 @@
         </li>
         <li class="nav-item">
             <a href="<?= base_url('jadwal') ?>" class="nav-link">
-                <i class="ri-calendar-schedule-line"></i> Jadwal
+                <i class="ri-calendar-2-line"></i> Jadwal
             </a>
         </li>
         <li class="nav-item">
