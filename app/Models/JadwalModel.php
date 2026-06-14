@@ -45,4 +45,16 @@ class JadwalModel extends Model
             ->get()
             ->getResultArray();
     }
+
+    public function getDetail(int $id): ?array
+    {
+        return $this->db->table('tbl_jadwal jd')
+            ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
+            ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
+            ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
+            ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left')
+            ->where('jd.id_jadwal', $id)
+            ->get()
+            ->getRowArray();
+    }
 }

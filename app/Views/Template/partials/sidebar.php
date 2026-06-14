@@ -41,18 +41,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="<?= base_url('tahun-ajaran') ?>" class="nav-link">
-                <i class="ri-calendar-line"></i> Tahun Ajaran
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?= base_url('nilai') ?>" class="nav-link">
-                <i class="ri-bar-chart-box-line"></i> Nilai
-            </a>
-        </li>
-        <li class="nav-item">
             <a href="<?= base_url('absensi') ?>" class="nav-link">
                 <i class="ri-calendar-check-line"></i> Absensi
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?= base_url('absensi/rekap') ?>" class="nav-link">
+                <i class="ri-file-chart-line"></i> Rekap Absensi
             </a>
         </li>
     </ul>

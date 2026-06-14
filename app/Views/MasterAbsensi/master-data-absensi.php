@@ -5,7 +5,10 @@
         <h3>Kelola Absensi</h3>
         <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Absensi</div>
     </div>
-    <a href="<?= base_url('absensi/tambah') ?>" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> Tambah Absensi</a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="<?= base_url('absensi/rekap') ?>" class="btn btn-secondary btn-sm"><i class="ri-file-chart-line"></i> Rekap Absensi</a>
+        <a href="<?= base_url('absensi/tambah') ?>" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> Tambah Absensi</a>
+    </div>
 </div>
 
 <div class="card">
@@ -34,6 +37,7 @@
                     <th>Siswa</th>
                     <th>Kelas</th>
                     <th>Tahun</th>
+                    <th>Mapel</th>
                     <th>Status</th>
                     <th>Keterangan</th>
                     <th width="150">Aksi</th>
@@ -41,7 +45,7 @@
             </thead>
             <tbody>
                 <?php if (empty($absensi)): ?>
-                    <tr><td colspan="8"><div class="empty-state"><i class="ri-calendar-check-line"></i><p>Tidak ada data absensi</p></div></td></tr>
+                    <tr><td colspan="9"><div class="empty-state"><i class="ri-calendar-check-line"></i><p>Tidak ada data absensi</p></div></td></tr>
                 <?php else: ?>
                     <?php foreach ($absensi as $i => $a): ?>
                         <tr>
@@ -50,6 +54,7 @@
                             <td><strong><?= esc($a['nama_siswa'] ?? '-') ?></strong><br><small><?= esc($a['nisn'] ?? '-') ?></small></td>
                             <td><?= esc($a['nama_kelas'] ?? '-') ?></td>
                             <td><?= esc(($a['tahun_ajaran'] ?? '-') . ' ' . ($a['semester'] ?? '')) ?></td>
+                            <td><?= esc($a['nama_mapel'] ?? '-') ?></td>
                             <td><span class="badge <?= $a['status'] == 'Hadir' ? 'badge-aktif' : 'badge-warning' ?>"><?= esc($a['status']) ?></span></td>
                             <td><?= esc($a['keterangan'] ?? '-') ?></td>
                             <td>

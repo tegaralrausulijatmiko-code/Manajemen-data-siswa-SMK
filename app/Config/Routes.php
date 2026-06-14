@@ -63,24 +63,12 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->post('jadwal/update/(:num)', 'Jadwal::update/$1');
     $routes->post('jadwal/hapus/(:num)', 'Jadwal::hapus/$1');
 
-    // routes untuk tahun ajaran
-    $routes->get ('tahun-ajaran', 'TahunAjaran::index');
-    $routes->get ('tahun-ajaran/tambah', 'TahunAjaran::tambah');
-    $routes->post('tahun-ajaran/simpan', 'TahunAjaran::simpan');
-    $routes->get ('tahun-ajaran/edit/(:num)', 'TahunAjaran::edit/$1');
-    $routes->post('tahun-ajaran/update/(:num)', 'TahunAjaran::update/$1');
-    $routes->post('tahun-ajaran/hapus/(:num)', 'TahunAjaran::hapus/$1');
-
-    // routes untuk nilai
-    $routes->get ('nilai', 'Nilai::index');
-    $routes->get ('nilai/tambah', 'Nilai::tambah');
-    $routes->post('nilai/simpan', 'Nilai::simpan');
-    $routes->get ('nilai/edit/(:num)', 'Nilai::edit/$1');
-    $routes->post('nilai/update/(:num)', 'Nilai::update/$1');
-    $routes->post('nilai/hapus/(:num)', 'Nilai::hapus/$1');
-
     // routes untuk absensi
     $routes->get ('absensi', 'Absensi::index');
+    $routes->get ('absensi/rekap', 'Absensi::rekap');
+    $routes->get ('absensi/rekap/export', 'Absensi::exportRekap');
+    $routes->get ('absensi/jadwal/(:num)', 'Absensi::jadwal/$1');
+    $routes->post('absensi/jadwal/(:num)/simpan', 'Absensi::simpanJadwal/$1');
     $routes->get ('absensi/tambah', 'Absensi::tambah');
     $routes->post('absensi/simpan', 'Absensi::simpan');
     $routes->get ('absensi/edit/(:num)', 'Absensi::edit/$1');
