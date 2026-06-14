@@ -46,15 +46,10 @@
                     <td><strong><?= esc($j['kode_jurusan']) ?></strong></td>
                     <td><?= esc($j['nama_jurusan']) ?></td>
                     <td>
-                        <?php if (! empty($j['nama_guru'])): ?>
-                            <span style="display:flex; align-items:center; gap:8px;">
-                                <span style="width:30px; height:30px; border-radius:6px; background:#eff6ff; color:var(--primary); display:flex; align-items:center; justify-content:center;">
-                                    <i class="ri-user-star-line"></i>
-                                </span>
-                                <?= esc($j['nama_guru']) ?>
-                            </span>
-                        <?php else: ?>
+                        <?php if (empty($j['nama_guru'])): ?>
                             <span style="color:var(--text-light);">Belum dipilih</span>
+                            <?php else: ?>
+                            <?= esc($j['nama_guru']) ?>
                         <?php endif; ?>
                     </td>
                     <td>
