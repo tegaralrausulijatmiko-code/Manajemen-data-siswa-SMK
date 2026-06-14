@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class JadwalModel extends Model
+{
+    protected $table      = 'tbl_jadwal';
+    protected $primaryKey = 'id_jadwal';
+    protected $returnType = 'array';
+
+    protected $allowedFields = [
+        'id_kelas', 'id_mapel', 'id_guru', 'hari', 'jam_mulai', 'jam_selesai', 'ruang',
+    ];
+
+    protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+
+    public function getAll(?string $keyword = null, ?string $id_kelas = null): array
+    {
+        $builder = $this->db->table('tbl_jadwal jd')
+            ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
+            ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
+            ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
+            ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left');
+
+        if ($keyword) {
+            $builder->groupStart()
+                ->like('k.nama_kelas', $keyword)
+                ->orLike('m.nama_mapel', $keyword)
+                ->orLike('g.nama_guru', $keyword)
+                ->orLike('jd.ruang', $keyword)
+            ->groupEnd();
+        }
+
+        if ($id_kelas) {
+            $builder->where('jd.id_kelas', $id_kelas);
+        }
+
+        return $builder
+            ->orderBy("FIELD(jd.hari, 'Senin','Selasa','Rabu','Kamis','Jumat','Sabtu')", '', false)
+            ->orderBy('jd.jam_mulai', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
+}
