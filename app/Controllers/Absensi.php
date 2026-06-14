@@ -5,21 +5,18 @@ namespace App\Controllers;
 use App\Models\AbsensiModel;
 use App\Models\KelasModel;
 use App\Models\SiswaModel;
-use App\Models\TahunAjaranModel;
 
 class Absensi extends BaseController
 {
     protected AbsensiModel $model;
     protected SiswaModel $siswaModel;
     protected KelasModel $kelasModel;
-    protected TahunAjaranModel $tahunModel;
 
     public function __construct()
     {
         $this->model      = new AbsensiModel();
         $this->siswaModel = new SiswaModel();
         $this->kelasModel = new KelasModel();
-        $this->tahunModel = new TahunAjaranModel();
     }
 
     public function index()
@@ -91,7 +88,6 @@ class Absensi extends BaseController
         return [
             'id_siswa'        => 'required|integer',
             'id_kelas'        => 'required|integer',
-            'id_tahun_ajaran' => 'required|integer',
             'tanggal'         => 'required|valid_date',
             'status'          => 'required|in_list[Hadir,Izin,Sakit,Alpa]',
             'keterangan'      => 'permit_empty|max_length[255]',
@@ -103,7 +99,6 @@ class Absensi extends BaseController
         return [
             'id_siswa'        => $this->request->getPost('id_siswa'),
             'id_kelas'        => $this->request->getPost('id_kelas'),
-            'id_tahun_ajaran' => $this->request->getPost('id_tahun_ajaran'),
             'tanggal'         => $this->request->getPost('tanggal'),
             'status'          => $this->request->getPost('status'),
             'keterangan'      => $this->request->getPost('keterangan'),
@@ -115,7 +110,6 @@ class Absensi extends BaseController
         return array_merge([
             'siswa_list' => $this->siswaModel->getAll(),
             'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
-            'tahun_list' => $this->tahunModel->orderBy('tahun_ajaran', 'DESC')->findAll(),
             'status_list'=> ['Hadir', 'Izin', 'Sakit', 'Alpa'],
         ], $extra);
     }

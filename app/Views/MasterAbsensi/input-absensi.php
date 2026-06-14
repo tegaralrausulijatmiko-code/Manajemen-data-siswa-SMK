@@ -27,16 +27,10 @@
                         <?php foreach ($kelas_list as $k): ?><option value="<?= $k['id_kelas'] ?>" <?= old('id_kelas') == $k['id_kelas'] ? 'selected' : '' ?>><?= esc($k['nama_kelas']) ?></option><?php endforeach; ?>
                     </select>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Tahun Ajaran <span class="required">*</span></label>
-                    <select name="id_tahun_ajaran" class="form-control" required>
-                        <option value="">-- Pilih Tahun Ajaran --</option>
-                        <?php foreach ($tahun_list as $t): ?><option value="<?= $t['id_tahun_ajaran'] ?>" <?= old('id_tahun_ajaran') == $t['id_tahun_ajaran'] ? 'selected' : '' ?>><?= esc($t['tahun_ajaran']) ?> - <?= esc($t['semester']) ?></option><?php endforeach; ?>
-                    </select>
+                    <label class="form-label">Tanggal <span class="required">*</span></label>
+                    <input type="date" name="tanggal" class="form-control" value="<?= old('tanggal', date('Y-m-d')) ?>" required>
                 </div>
-                <div class="form-group"><label class="form-label">Tanggal <span class="required">*</span></label><input type="date" name="tanggal" class="form-control" value="<?= old('tanggal', date('Y-m-d')) ?>" required></div>
             </div>
             <div class="form-group">
                 <label class="form-label">Status <span class="required">*</span></label>

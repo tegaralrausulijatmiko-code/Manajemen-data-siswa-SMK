@@ -33,7 +33,6 @@
                     <th>Tanggal</th>
                     <th>Siswa</th>
                     <th>Kelas</th>
-                    <th>Tahun</th>
                     <th>Status</th>
                     <th>Keterangan</th>
                     <th width="150">Aksi</th>
@@ -49,7 +48,6 @@
                             <td><?= esc(date('d/m/Y', strtotime($a['tanggal']))) ?></td>
                             <td><strong><?= esc($a['nama_siswa'] ?? '-') ?></strong><br><small><?= esc($a['nisn'] ?? '-') ?></small></td>
                             <td><?= esc($a['nama_kelas'] ?? '-') ?></td>
-                            <td><?= esc(($a['tahun_ajaran'] ?? '-') . ' ' . ($a['semester'] ?? '')) ?></td>
                             <td><span class="badge <?= $a['status'] == 'Hadir' ? 'badge-aktif' : 'badge-warning' ?>"><?= esc($a['status']) ?></span></td>
                             <td><?= esc($a['keterangan'] ?? '-') ?></td>
                             <td>

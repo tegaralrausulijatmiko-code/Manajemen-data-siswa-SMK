@@ -8,8 +8,6 @@ use App\Models\KelasModel;
 use App\Models\SiswaModel;
 use App\Models\MapelModel;
 use App\Models\JadwalModel;
-use App\Models\TahunAjaranModel;
-use App\Models\NilaiModel;
 use App\Models\AbsensiModel;
 
 
@@ -23,8 +21,6 @@ class Dashboard extends BaseController
         $siswaModel  = new SiswaModel();
         $mapelModel  = new MapelModel();
         $jadwalModel = new JadwalModel();
-        $tahunAjaranModel = new TahunAjaranModel();
-        $nilaiModel = new NilaiModel();
         $absensiModel = new AbsensiModel();
 
         // Stats
@@ -35,8 +31,6 @@ class Dashboard extends BaseController
             'siswa'   => $siswaModel->countAll(),
             'mapel'   => $mapelModel->countAll(),
             'jadwal' => $jadwalModel->countAll(),
-            'tahun_ajaran' => $tahunAjaranModel->countAll(),
-            'nilai' => $nilaiModel->countAll(),
             'absensi' => $absensiModel->countAll(),
         ];
 
