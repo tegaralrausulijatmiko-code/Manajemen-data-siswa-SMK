@@ -147,3 +147,4 @@ class Routing extends BaseRouting
      */
     public bool $translateUriToCamelCase = true;
 }
+
