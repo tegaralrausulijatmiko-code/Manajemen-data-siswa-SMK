@@ -11,7 +11,7 @@ class AbsensiModel extends Model
     protected $returnType = 'array';
 
     protected $allowedFields = [
-        'id_siswa', 'id_kelas', 'id_tahun_ajaran', 'id_jadwal', 'tanggal', 'status', 'keterangan',
+        'id_siswa', 'id_kelas', 'id_jadwal', 'tanggal', 'status', 'keterangan',
     ];
 
     protected $useTimestamps = true;
@@ -21,14 +21,12 @@ class AbsensiModel extends Model
     public function getAll(?string $keyword = null, ?string $tanggal = null, ?string $id_kelas = null): array
     {
         $builder = $this->db->table('tbl_absensi a')
-            ->select('a.*, s.nisn, s.nama_siswa, k.nama_kelas, ta.tahun_ajaran, ta.semester, jd.hari, jd.jam_mulai, jd.jam_selesai, m.nama_mapel, g.nama_guru')
+            ->select('a.*, s.nisn, s.nama_siswa, k.nama_kelas, jd.hari, jd.jam_mulai, jd.jam_selesai, m.nama_mapel, g.nama_guru')
             ->join('tbl_siswa s', 's.id_siswa = a.id_siswa', 'left')
             ->join('tbl_kelas k', 'k.id_kelas = a.id_kelas', 'left')
-            ->join('tbl_tahun_ajaran ta', 'ta.id_tahun_ajaran = a.id_tahun_ajaran', 'left')
             ->join('tbl_jadwal jd', 'jd.id_jadwal = a.id_jadwal', 'left')
             ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
             ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left');
-
         if ($keyword) {
             $builder->groupStart()
                 ->like('s.nama_siswa', $keyword)
@@ -73,10 +71,9 @@ class AbsensiModel extends Model
     public function getRekap(array $filters = []): array
     {
         $builder = $this->db->table('tbl_absensi a')
-            ->select('a.*, s.nisn, s.nama_siswa, k.nama_kelas, ta.tahun_ajaran, ta.semester, jd.hari, jd.jam_mulai, jd.jam_selesai, m.nama_mapel, g.nama_guru')
+            ->select('a.*, s.nisn, s.nama_siswa, k.nama_kelas, jd.hari, jd.jam_mulai, jd.jam_selesai, m.nama_mapel, g.nama_guru')
             ->join('tbl_siswa s', 's.id_siswa = a.id_siswa', 'left')
             ->join('tbl_kelas k', 'k.id_kelas = a.id_kelas', 'left')
-            ->join('tbl_tahun_ajaran ta', 'ta.id_tahun_ajaran = a.id_tahun_ajaran', 'left')
             ->join('tbl_jadwal jd', 'jd.id_jadwal = a.id_jadwal', 'left')
             ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
             ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left');

@@ -36,7 +36,6 @@
                     <th>Tanggal</th>
                     <th>Siswa</th>
                     <th>Kelas</th>
-                    <th>Tahun</th>
                     <th>Mapel</th>
                     <th>Status</th>
                     <th>Keterangan</th>
@@ -45,7 +44,7 @@
             </thead>
             <tbody>
                 <?php if (empty($absensi)): ?>
-                    <tr><td colspan="9"><div class="empty-state"><i class="ri-calendar-check-line"></i><p>Tidak ada data absensi</p></div></td></tr>
+                    <tr><td colspan="8"><div class="empty-state"><i class="ri-calendar-check-line"></i><p>Tidak ada data absensi</p></div></td></tr>
                 <?php else: ?>
                     <?php foreach ($absensi as $i => $a): ?>
                         <tr>
@@ -53,7 +52,6 @@
                             <td><?= esc(date('d/m/Y', strtotime($a['tanggal']))) ?></td>
                             <td><strong><?= esc($a['nama_siswa'] ?? '-') ?></strong><br><small><?= esc($a['nisn'] ?? '-') ?></small></td>
                             <td><?= esc($a['nama_kelas'] ?? '-') ?></td>
-                            <td><?= esc(($a['tahun_ajaran'] ?? '-') . ' ' . ($a['semester'] ?? '')) ?></td>
                             <td><?= esc($a['nama_mapel'] ?? '-') ?></td>
                             <td><span class="badge <?= $a['status'] == 'Hadir' ? 'badge-aktif' : 'badge-warning' ?>"><?= esc($a['status']) ?></span></td>
                             <td><?= esc($a['keterangan'] ?? '-') ?></td>

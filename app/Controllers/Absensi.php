@@ -6,7 +6,6 @@ use App\Models\AbsensiModel;
 use App\Models\JadwalModel;
 use App\Models\KelasModel;
 use App\Models\SiswaModel;
-use App\Models\TahunAjaranModel;
 
 class Absensi extends BaseController
 {
@@ -14,7 +13,6 @@ class Absensi extends BaseController
     protected JadwalModel $jadwalModel;
     protected SiswaModel $siswaModel;
     protected KelasModel $kelasModel;
-    protected TahunAjaranModel $tahunModel;
 
     public function __construct()
     {
@@ -22,7 +20,6 @@ class Absensi extends BaseController
         $this->jadwalModel = new JadwalModel();
         $this->siswaModel = new SiswaModel();
         $this->kelasModel = new KelasModel();
-        $this->tahunModel = new TahunAjaranModel();
     }
 
     public function index()
@@ -56,12 +53,6 @@ class Absensi extends BaseController
         }
 
         $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
-        $tahun = $this->getTahunAktif();
-
-        if (! $tahun) {
-            return redirect()->to(base_url('absensi'))->with('error', 'Tahun ajaran aktif belum tersedia di database.');
-        }
-
         $siswa = $this->siswaModel->getAll(null, (string) $jadwal['id_kelas']);
         $absensiMap = $this->model->getByJadwalDate((int) $id, $tanggal);
 
@@ -69,7 +60,6 @@ class Absensi extends BaseController
             'jadwal'      => $jadwal,
             'siswa_list'  => $siswa,
             'tanggal'     => $tanggal,
-            'tahun'       => $tahun,
             'absensi_map' => $absensiMap,
             'status_list' => $this->statusList(),
         ]);
@@ -85,11 +75,6 @@ class Absensi extends BaseController
         $tanggal = $this->request->getPost('tanggal');
         if (! $tanggal || ! strtotime($tanggal)) {
             return redirect()->back()->withInput()->with('error', 'Tanggal absensi wajib diisi.');
-        }
-
-        $tahun = $this->getTahunAktif();
-        if (! $tahun) {
-            return redirect()->to(base_url('absensi'))->with('error', 'Tahun ajaran aktif belum tersedia di database.');
         }
 
         $statuses = $this->request->getPost('status') ?? [];
@@ -115,7 +100,6 @@ class Absensi extends BaseController
             $payload = [
                 'id_siswa'        => $idSiswa,
                 'id_kelas'        => $jadwal['id_kelas'],
-                'id_tahun_ajaran' => $tahun['id_tahun_ajaran'],
                 'id_jadwal'       => $jadwal['id_jadwal'],
                 'tanggal'         => $tanggal,
                 'status'          => $status,
@@ -217,7 +201,6 @@ class Absensi extends BaseController
         return [
             'id_siswa'        => 'required|integer',
             'id_kelas'        => 'required|integer',
-            'id_tahun_ajaran' => 'required|integer',
             'tanggal'         => 'required|valid_date',
             'status'          => 'required|in_list[Hadir,Izin,Sakit,Alpa]',
             'keterangan'      => 'permit_empty|max_length[255]',
@@ -229,8 +212,6 @@ class Absensi extends BaseController
         return [
             'id_siswa'        => $this->request->getPost('id_siswa'),
             'id_kelas'        => $this->request->getPost('id_kelas'),
-            'id_tahun_ajaran' => $this->request->getPost('id_tahun_ajaran'),
-            'id_jadwal'       => $this->request->getPost('id_jadwal') ?: null,
             'tanggal'         => $this->request->getPost('tanggal'),
             'status'          => $this->request->getPost('status'),
             'keterangan'      => $this->request->getPost('keterangan'),
@@ -243,15 +224,8 @@ class Absensi extends BaseController
             'siswa_list' => $this->siswaModel->getAll(),
             'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
             'jadwal_list'=> $this->jadwalModel->getAll(),
-            'tahun_list' => $this->tahunModel->orderBy('tahun_ajaran', 'DESC')->findAll(),
             'status_list'=> $this->statusList(),
         ], $extra);
-    }
-
-    private function getTahunAktif(): ?array
-    {
-        return $this->tahunModel->where('status', 'Aktif')->first()
-            ?: $this->tahunModel->orderBy('tahun_ajaran', 'DESC')->first();
     }
 
     private function statusList(): array

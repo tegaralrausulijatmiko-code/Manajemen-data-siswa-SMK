@@ -27,12 +27,6 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Tahun Ajaran <span class="required">*</span></label>
-                    <select name="id_tahun_ajaran" class="form-control" required>
-                        <?php foreach ($tahun_list as $t): ?><option value="<?= $t['id_tahun_ajaran'] ?>" <?= $absensi['id_tahun_ajaran'] == $t['id_tahun_ajaran'] ? 'selected' : '' ?>><?= esc($t['tahun_ajaran']) ?> - <?= esc($t['semester']) ?></option><?php endforeach; ?>
-                    </select>
-                </div>
                 <div class="form-group"><label class="form-label">Tanggal <span class="required">*</span></label><input type="date" name="tanggal" class="form-control" value="<?= esc($absensi['tanggal']) ?>" required></div>
             </div>
             <div class="form-group">
