@@ -1,35 +1,35 @@
 <?php ob_start(); ?>
 
 <div class="stats-grid">
-    <div class="stat-card">
+    <div class="stat-card" onclick="location.href='<?= base_url('jurusan') ?>'" style="cursor:pointer;">
         <div class="stat-icon"><i class="ri-book-open-line"></i></div>
         <div class="stat-text">
             <h4><?= $stats['jurusan'] ?></h4>
             <p>Jurusan</p>
         </div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="location.href='<?= base_url('kelas') ?>'" style="cursor:pointer;">
         <div class="stat-icon" style="background:#f0fdf4; color:#16a34a;"><i class="ri-building-4-line"></i></div>
         <div class="stat-text">
             <h4><?= $stats['kelas'] ?></h4>
             <p>Kelas Aktif</p>
         </div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="location.href='<?= base_url('siswa') ?>'" style="cursor:pointer;">
         <div class="stat-icon" style="background:#fdf4ff; color:#9333ea;"><i class="ri-user-smile-line"></i></div>
         <div class="stat-text">
             <h4><?= $stats['siswa'] ?></h4>
             <p>Total Siswa</p>
         </div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="location.href='<?= base_url('guru') ?>'" style="cursor:pointer;">
         <div class="stat-icon" style="background:#f0f9ff; color:#0284c7;"><i class="ri-user-star-line"></i></div>
         <div class="stat-text">
             <h4><?= $stats['guru'] ?></h4>
             <p>Total Guru</p>
         </div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" onclick="location.href='<?= base_url('mapel') ?>'" style="cursor:pointer;">
         <div class="stat-icon" style="background:#fff7ed; color:#ea580c;"><i class="ri-book-read-line"></i></div>
         <div class="stat-text">
             <h4><?= $stats['mapel'] ?></h4>
