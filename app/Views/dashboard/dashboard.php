@@ -36,6 +36,34 @@
             <p>Mata Pelajaran</p>
         </div>
     </div>
+    <div class="stat-card" onclick="location.href='<?= base_url('jadwal') ?>'" style="cursor:pointer;">
+        <div class="stat-icon" style="background:#f0f9ff; color:#0284c7;"><i class="ri-calendar-2-line"></i></div>
+        <div class="stat-text">
+            <h4><?= $stats['jadwal'] ?></h4>
+            <p>Jadwal Pelajaran</p>
+        </div>
+    </div>
+    <!-- <div class="stat-card" onclick="location.href='<?= base_url('tahun-ajaran') ?>'" style="cursor:pointer;">
+        <div class="stat-icon" style="background:#fef3c7; color:#ca8a04;"><i class="ri-calendar-line"></i></div>
+        <div class="stat-text">
+            <h4><?= $stats['tahun_ajaran'] ?></h4>
+            <p>Tahun Ajaran</p>
+        </div>
+    </div>
+    <div class="stat-card" onclick="location.href='<?= base_url('nilai') ?>'" style="cursor:pointer;">
+        <div class="stat-icon" style="background:#f0fdf4; color:#16a34a;"><i class="ri-bar-chart-box-line"></i></div>
+        <div class="stat-text">
+            <h4><?= $stats['nilai'] ?></h4>
+            <p>Data Nilai</p>
+        </div>
+    </div> -->
+    <div class="stat-card" onclick="location.href='<?= base_url('absensi') ?>'" style="cursor:pointer;">
+        <div class="stat-icon" style="background:#f3e8ff; color:#7e22ce;"><i class="ri-checkbox-circle-line"></i></div>
+        <div class="stat-text">
+            <h4><?= $stats['absensi'] ?></h4>
+            <p>Data Absensi</p>
+        </div>
+    </div>
 </div>
 
 

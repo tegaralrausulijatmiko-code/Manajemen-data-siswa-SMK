@@ -40,7 +40,7 @@
                 <i class="ri-calendar-2-line"></i> Jadwal
             </a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a href="<?= base_url('tahun-ajaran') ?>" class="nav-link">
                 <i class="ri-calendar-line"></i> Tahun Ajaran
             </a>
@@ -49,7 +49,7 @@
             <a href="<?= base_url('nilai') ?>" class="nav-link">
                 <i class="ri-bar-chart-box-line"></i> Nilai
             </a>
-        </li>
+        </li> -->
         <li class="nav-item">
             <a href="<?= base_url('absensi') ?>" class="nav-link">
                 <i class="ri-calendar-check-line"></i> Absensi

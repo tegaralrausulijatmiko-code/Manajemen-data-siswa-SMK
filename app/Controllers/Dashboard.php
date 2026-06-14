@@ -7,6 +7,11 @@ use App\Models\JurusanModel;
 use App\Models\KelasModel;
 use App\Models\SiswaModel;
 use App\Models\MapelModel;
+use App\Models\JadwalModel;
+use App\Models\TahunAjaranModel;
+use App\Models\NilaiModel;
+use App\Models\AbsensiModel;
+
 
 class Dashboard extends BaseController
 {
@@ -17,6 +22,10 @@ class Dashboard extends BaseController
         $kelasModel  = new KelasModel();
         $siswaModel  = new SiswaModel();
         $mapelModel  = new MapelModel();
+        $jadwalModel = new JadwalModel();
+        $tahunAjaranModel = new TahunAjaranModel();
+        $nilaiModel = new NilaiModel();
+        $absensiModel = new AbsensiModel();
 
         // Stats
         $stats = [
@@ -25,6 +34,10 @@ class Dashboard extends BaseController
             'kelas'   => $kelasModel->countAll(),
             'siswa'   => $siswaModel->countAll(),
             'mapel'   => $mapelModel->countAll(),
+            'jadwal' => $jadwalModel->countAll(),
+            'tahun_ajaran' => $tahunAjaranModel->countAll(),
+            'nilai' => $nilaiModel->countAll(),
+            'absensi' => $absensiModel->countAll(),
         ];
 
         // Jurusan list dengan jumlah kelas dan siswa
