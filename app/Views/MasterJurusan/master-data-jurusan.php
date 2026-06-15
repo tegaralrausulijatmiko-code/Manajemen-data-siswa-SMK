@@ -24,7 +24,7 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">No</th>
+                    <th width="50">No<</th>
                     <th>Kode</th>
                     <th>Nama Jurusan</th>
                     <th>Kepala Program</th>
