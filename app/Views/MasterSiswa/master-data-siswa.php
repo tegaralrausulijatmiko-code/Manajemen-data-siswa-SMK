@@ -53,14 +53,14 @@
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
                     <td>
                         <?php if (! empty($s['foto'])): ?>
-                            <img src="<?= base_url('uploads/' . $s['foto']) ?>" alt="Foto <?= esc($s['nama_siswa']) ?>" style="width:44px; height:44px; border-radius:8px; object-fit:cover; display:block;">
+                            <img src="<?= base_url('uploads/' . $s['foto']) ?>" alt="Foto <?= esc($s['nama_siswa']) ?>" style="width:45px; height:45px; border-radius:10px; object-fit:cover; display:block;">
                         <?php else: ?>
                             <div style="width:44px; height:44px; border-radius:8px; background:#eff6ff; color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.25rem;">
                                 <i class="ri-user-line"></i>
                             </div>
                         <?php endif; ?>
                     </td>
-                    <td><code style="font-size:0.8rem; background:#f1f5f9; padding:2px 6px; border-radius:4px;"><?= esc($s['nisn']) ?></code></td>
+                    <td><?= esc($s['nisn']) ?></td>
                     <td><strong><?= esc($s['nama_siswa']) ?></strong></td>
                     <td><?= esc($s['nama_kelas'] ?? '-') ?></td>
                     <td>
