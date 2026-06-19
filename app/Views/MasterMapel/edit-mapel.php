@@ -34,7 +34,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Kelas <span class="required">*</span></label>
+                    <label class="form-label">Kelas<span class="required">*</span></label>
                     <select name="id_kelas" class="form-control" required>
                         <option value="">-- Pilih Kelas --</option>
                         <?php foreach ($kelas_list as $kelas): ?>

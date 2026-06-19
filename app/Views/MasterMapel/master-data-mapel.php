@@ -50,9 +50,9 @@
                 <?php foreach ($mapel as $i => $m): ?>
                 <tr>
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
-                    <td><code style="font-size:0.8rem; background:#f1f5f9; padding:2px 6px; border-radius:4px;"><?= esc($m['kode_mapel']) ?></code></td>
-                    <td><strong><?= esc($m['nama_mapel']) ?></strong></td>
-                    <td><?= esc($m['tingkat']) ?></td>
+                    <td><strong><?= esc($m['kode_mapel']) ?></strong></td>
+                    <td><?= esc($m['nama_mapel']) ?></td>
+                    <td><span class="badge badge-light"><?= esc($m['tingkat']) ?></span></td>
                     <td><?= esc($m['nama_guru']) ?></td>
                     <td>
                         <span class="badge <?= $m['status'] == 'Produktif' ? 'badge-prod' : 'badge-non-prod' ?>">
