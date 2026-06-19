@@ -193,9 +193,15 @@
 
     <script>
         // Highlight active nav
-        const currentPath = window.location.pathname;
+        const currentPath = window.location.pathname.replace(/\/$/, '');
         document.querySelectorAll('.nav-link').forEach(link => {
-            if (link.getAttribute('href') && currentPath.startsWith(link.getAttribute('href'))) {
+            const href = link.getAttribute('href');
+            if (!href) return;
+
+            const linkUrl = new URL(href, window.location.origin);
+            const linkPath = linkUrl.pathname.replace(/\/$/, '');
+
+            if (currentPath === linkPath || (linkPath !== '' && currentPath.endsWith(linkPath))) {
                 link.classList.add('active');
             }
         });

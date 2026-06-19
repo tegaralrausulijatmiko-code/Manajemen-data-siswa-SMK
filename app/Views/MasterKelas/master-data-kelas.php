@@ -14,7 +14,7 @@
     <div class="card-header">
         <div class="card-title">Daftar Kelas</div>
         <form method="get" style="display:flex; gap:10px; align-items:center;">
-            <select name="tingkat" class="form-control" style="width:120px; padding:8px 10px; font-size:0.9rem;" onchange="this.form.submit()">
+            <select name="tingkat" class="form-control" style="width:140px; padding:8px 10px; font-size:0.9rem;" onchange="this.form.submit()">
                 <option value="">Semua Tingkat</option>
                 <option value="X"   <?= ($filter_tingkat??'') == 'X'   ? 'selected':'' ?>>Kelas X</option>
                 <option value="XI"  <?= ($filter_tingkat??'') == 'XI'  ? 'selected':'' ?>>Kelas XI</option>
