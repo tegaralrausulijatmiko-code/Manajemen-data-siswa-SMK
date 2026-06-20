@@ -6,7 +6,7 @@
         <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Absensi</div>
     </div>
     <div style="display:flex; gap:8px;">
-        <a href="<?= base_url('absensi/rekap') ?>" class="btn btn-secondary btn-sm"><i class="ri-file-list-3-line"></i> Rekap Absensi</a>
+        <a href="<?= base_url('absensi/rekap') ?>" class="btn btn-edit btn-sm"><i class="ri-file-list-3-line"></i> Rekap Absensi</a>
         <button type="submit" form="attendance-save-form" class="btn btn-primary btn-sm"><i class="ri-save-line"></i> Simpan Absensi</button>
     </div>
 </div>
