@@ -28,7 +28,7 @@
             </div>
         </form>
     </div>
-    <form method="post" action="<?= base_url('absensi/simpan-absensi') ?>" id="attendance-save-form">
+    <form method="post" action="<?= base_url('absensi/simpan') ?>" id="attendance-save-form">
         <?= csrf_field() ?>
         <input type="hidden" name="kelas" value="<?= esc($filter_kelas ?? '') ?>">
         <input type="hidden" name="q" value="<?= esc($keyword ?? '') ?>">
