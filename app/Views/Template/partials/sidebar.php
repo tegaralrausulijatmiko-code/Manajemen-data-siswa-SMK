@@ -45,6 +45,11 @@
                 <i class="ri-calendar-check-line"></i> Absensi
             </a>
         </li>
+        <li class="nav-item">
+            <a href="<?= base_url('absensi/rekap') ?>" class="nav-link">
+                <i class="ri-file-chart-line"></i> Rekap Absensi
+            </a>
+        </li>
     </ul>
     <div class="sidebar-footer">
         <ul>

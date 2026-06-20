@@ -65,6 +65,10 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
     // routes untuk absensi
     $routes->get ('absensi', 'Absensi::index');
+    $routes->get ('absensi/rekap', 'Absensi::rekap');
+    $routes->get ('absensi/rekap/export', 'Absensi::exportRekap');
+    $routes->get ('absensi/jadwal/(:num)', 'Absensi::jadwal/$1');
+    $routes->post('absensi/jadwal/(:num)/simpan', 'Absensi::simpanJadwal/$1');
     $routes->get ('absensi/tambah', 'Absensi::tambah');
     $routes->post('absensi/simpan', 'Absensi::simpan');
     $routes->get ('absensi/edit/(:num)', 'Absensi::edit/$1');

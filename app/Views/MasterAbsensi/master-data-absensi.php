@@ -5,7 +5,7 @@
         <h3>Kelola Absensi</h3>
         <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Absensi</div>
     </div>
-    <button type="submit" form="attendance-save-form" class="btn btn-primary btn-sm"><i class="ri-save-line"></i> Simpan Absensi</button>
+    <a href="<?= base_url('absensi/tambah') ?>" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> Tambah Absensi</a>
 </div>
 
 <div class="card">
@@ -25,57 +25,42 @@
             </div>
         </form>
     </div>
-    <form method="post" action="<?= base_url('absensi/simpan-absensi') ?>" id="attendance-save-form">
-        <?= csrf_field() ?>
-        <input type="hidden" name="kelas" value="<?= esc($filter_kelas ?? '') ?>">
-        <input type="hidden" name="q" value="<?= esc($keyword ?? '') ?>">
-        <input type="hidden" name="tanggal" value="<?= esc($filter_tanggal ?? date('Y-m-d')) ?>">
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Siswa</th>
-                        <th>Kelas</th>
-                        <th>Status Saat Ini</th>
-                        <th>Keterangan</th>
-                        <th width="260">Ubah Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($siswa_list)): ?>
-                        <tr><td colspan="7"><div class="empty-state"><i class="ri-calendar-check-line"></i><p>Tidak ada siswa untuk ditampilkan.</p></div></td></tr>
-                    <?php else: ?>
-                        <?php foreach ($siswa_list as $i => $s):
-                            $attendance = $attendance_map[$s['id_siswa']] ?? null;
-                            $status = $attendance['status'] ?? 'Belum Absen';
-                            $badgeClass = $status === 'Hadir' ? 'badge-aktif' : ($status === 'Izin' ? 'badge-warning' : ($status === 'Alpa' ? 'badge-nonaktif' : 'badge-light'));
-                        ?>
-                            <tr>
-                                <td><?= $i + 1 ?></td>
-                                <td><?= esc(date('d/m/Y', strtotime($filter_tanggal ?? date('Y-m-d')))) ?></td>
-                                <td><strong><?= esc($s['nama_siswa']) ?></strong><br><small><?= esc($s['nisn']) ?></small></td>
-                                <td><?= esc($s['nama_kelas'] ?? '-') ?></td>
-                                <td><span class="badge <?= $badgeClass ?>"><?= esc($status) ?></span></td>
-                                <td><?= esc($attendance['keterangan'] ?? '-') ?></td>
-                                <td>
-                                    <input type="hidden" name="id_kelas[<?= $s['id_siswa'] ?>]" value="<?= esc($s['id_kelas']) ?>">
-                                    <select name="status[<?= $s['id_siswa'] ?>]" class="form-control status-select" data-id="<?= $s['id_siswa'] ?>" style="width:100%; padding:8px 10px;">
-                                        <option value="Belum Absen" <?= $status === 'Belum Absen' ? 'selected' : '' ?>>Belum Absen</option>
-                                        <option value="Hadir" <?= $status === 'Hadir' ? 'selected' : '' ?>>Hadir</option>
-                                        <option value="Izin" <?= $status === 'Izin' ? 'selected' : '' ?>>Izin</option>
-                                        <option value="Alpa" <?= $status === 'Alpa' ? 'selected' : '' ?>>Alpa</option>
-                                    </select>
-                                    <input type="text" name="keterangan[<?= $s['id_siswa'] ?>]" id="keterangan-<?= $s['id_siswa'] ?>" class="form-control keterangan-input" style="width:100%; padding:8px 10px; margin-top:6px; <?= $status !== 'Izin' ? 'display:none;' : '' ?>" placeholder="Keterangan izin..." value="<?= esc($attendance['keterangan'] ?? '') ?>">
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </form>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Siswa</th>
+                    <th>Kelas</th>
+                    <th>Status</th>
+                    <th>Keterangan</th>
+                    <th width="150">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($absensi)): ?>
+                    <tr><td colspan="8"><div class="empty-state"><i class="ri-calendar-check-line"></i><p>Tidak ada data absensi</p></div></td></tr>
+                <?php else: ?>
+                    <?php foreach ($absensi as $i => $a): ?>
+                        <tr>
+                            <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
+                            <td><?= esc(date('d/m/Y', strtotime($a['tanggal']))) ?></td>
+                            <td><strong><?= esc($a['nama_siswa'] ?? '-') ?></strong><br><small><?= esc($a['nisn'] ?? '-') ?></small></td>
+                            <td><?= esc($a['nama_kelas'] ?? '-') ?></td>
+                            <td><span class="badge <?= $a['status'] == 'Hadir' ? 'badge-aktif' : 'badge-warning' ?>"><?= esc($a['status']) ?></span></td>
+                            <td><?= esc($a['keterangan'] ?? '-') ?></td>
+                            <td>
+                                <a href="<?= base_url('absensi/edit/' . $a['id_absensi']) ?>" class="btn btn-edit btn-sm"><i class="ri-edit-line"></i>Edit</a>
+                                <button onclick="confirmDelete('<?= base_url('absensi/hapus/' . $a['id_absensi']) ?>')" class="btn btn-danger btn-sm"><i class="ri-delete-bin-line"></i>Hapus</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    <?= view('Template/partials/pagination', ['pagination' => $pagination ?? null]) ?>
 </div>
 
 <script>
