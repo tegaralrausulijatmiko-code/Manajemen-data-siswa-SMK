@@ -44,6 +44,14 @@ class Kelas extends BaseController
 
     public function simpan()
     {
+        $data = [
+            'id_jurusan'    => $this->request->getPost('id_jurusan'),
+            'nama_kelas'    => trim((string) $this->request->getPost('nama_kelas')),
+            'tingkat'       => $this->request->getPost('tingkat'),
+            'id_wali_kelas' => $this->request->getPost('id_wali_kelas'),
+            'jumlah_siswa'  => $this->request->getPost('jumlah_siswa'),
+        ];
+
         $rules = [
             'nama_kelas' => 'required|max_length[50]',
             'tingkat'    => 'required|in_list[X,XI,XII]',
@@ -52,20 +60,35 @@ class Kelas extends BaseController
             'jumlah_siswa'  => 'permit_empty|integer',
         ];
 
-        if (! $this->validate($rules)) {
-            return view('MasterKelas/input-kelas', [
-                'errors'       => $this->validator->getErrors(),
-                'jurusan_list' => $this->jurusanModel->findAll(),
-                'guru_list'    => $this->guruModel->findAll(),
+        $messages = [
+            'nama_kelas' => [
+                'is_unique' => 'Nama kelas sudah digunakan.',
+            ],
+        ];
+
+        if (! $this->validateData($data, $rules, $messages)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $idWaliKelas = $data['id_wali_kelas'];
+        if ($data['nama_kelas'] !== '' && $this->model->isNamaKelasTaken($data['nama_kelas'])) {
+            return redirect()->back()->withInput()->with('errors', [
+                'nama_kelas' => 'Nama kelas sudah digunakan.',
+            ]);
+        }
+
+        if ($idWaliKelas !== null && $idWaliKelas !== '' && $this->model->isWaliKelasUsed((int) $idWaliKelas)) {
+            return redirect()->back()->withInput()->with('errors', [
+                'id_wali_kelas' => 'Guru ini sudah menjadi wali kelas di kelas lain.',
             ]);
         }
 
         $this->model->insert([
-            'id_jurusan'    => $this->request->getPost('id_jurusan'),
-            'nama_kelas'    => $this->request->getPost('nama_kelas'),
-            'tingkat'       => $this->request->getPost('tingkat'),
-            'id_wali_kelas' => $this->request->getPost('id_wali_kelas') ?: null,
-            'jumlah_siswa'  => $this->request->getPost('jumlah_siswa') ?: 0,
+            'id_jurusan'    => $data['id_jurusan'],
+            'nama_kelas'    => $data['nama_kelas'],
+            'tingkat'       => $data['tingkat'],
+            'id_wali_kelas' => $idWaliKelas ?: null,
+            'jumlah_siswa'  => $data['jumlah_siswa'] ?: 0,
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil ditambahkan.');
@@ -87,6 +110,19 @@ class Kelas extends BaseController
 
     public function update($id)
     {
+        $kelas = $this->model->find($id);
+        if (! $kelas) {
+            return redirect()->to(base_url('kelas'))->with('error', 'Data tidak ditemukan.');
+        }
+
+        $data = [
+            'id_jurusan'    => $this->request->getPost('id_jurusan'),
+            'nama_kelas'    => trim((string) $this->request->getPost('nama_kelas')),
+            'tingkat'       => $this->request->getPost('tingkat'),
+            'id_wali_kelas' => $this->request->getPost('id_wali_kelas'),
+            'jumlah_siswa'  => $this->request->getPost('jumlah_siswa'),
+        ];
+
         $rules = [
             'nama_kelas'     => 'required|max_length[50]',
             'tingkat'        => 'required|in_list[X,XI,XII]',
@@ -95,21 +131,35 @@ class Kelas extends BaseController
             'jumlah_siswa'   => 'permit_empty|integer',
         ];
 
-        if (! $this->validate($rules)) {
-            return view('MasterKelas/edit-kelas', [
-                'kelas'        => $this->model->find($id),
-                'errors'       => $this->validator->getErrors(),
-                'jurusan_list' => $this->jurusanModel->findAll(),
-                'guru_list'    => $this->guruModel->findAll(),
+        $messages = [
+            'nama_kelas' => [
+                'is_unique' => 'Nama kelas sudah digunakan.',
+            ],
+        ];
+
+        if (! $this->validateData($data, $rules, $messages)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $idWaliKelas = $data['id_wali_kelas'];
+        if ($data['nama_kelas'] !== '' && $this->model->isNamaKelasTaken($data['nama_kelas'], (int) $id)) {
+            return redirect()->back()->withInput()->with('errors', [
+                'nama_kelas' => 'Nama kelas sudah digunakan.',
+            ]);
+        }
+
+        if ($idWaliKelas !== null && $idWaliKelas !== '' && $this->model->isWaliKelasUsed((int) $idWaliKelas, (int) $id)) {
+            return redirect()->back()->withInput()->with('errors', [
+                'id_wali_kelas' => 'Guru ini sudah menjadi wali kelas di kelas lain.',
             ]);
         }
 
         $this->model->update($id, [
-            'id_jurusan'    => $this->request->getPost('id_jurusan'),
-            'nama_kelas'    => $this->request->getPost('nama_kelas'),
-            'tingkat'       => $this->request->getPost('tingkat'),
-            'id_wali_kelas' => $this->request->getPost('id_wali_kelas') ?: null,
-            'jumlah_siswa'  => $this->request->getPost('jumlah_siswa') ?: 0,
+            'id_jurusan'    => $data['id_jurusan'],
+            'nama_kelas'    => $data['nama_kelas'],
+            'tingkat'       => $data['tingkat'],
+            'id_wali_kelas' => $idWaliKelas ?: null,
+            'jumlah_siswa'  => $data['jumlah_siswa'] ?: 0,
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil diperbarui.');
