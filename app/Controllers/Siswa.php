@@ -44,8 +44,10 @@ class Siswa extends BaseController
 
     public function simpan()
     {
+        $nisnRule = 'required|regex_match[/^\\d{10}$/]|is_unique[tbl_siswa.nisn]';
+
         $rules = [
-            'nisn'         => 'required|max_length[20]|is_unique[tbl_siswa.nisn]',
+            'nisn'         => $nisnRule,
             'nama_siswa'   => 'required|max_length[100]',
             'id_kelas'     => 'required|integer',
             'jenis_kelamin'=> 'required|in_list[L,P]',
@@ -95,9 +97,10 @@ class Siswa extends BaseController
     public function update($id)
     {
         $siswa = $this->model->find($id);
+        $nisnRule = "required|regex_match[/^\\d{10}$/]|is_unique[tbl_siswa.nisn,id_siswa,$id]";
 
         $rules = [
-            'nisn'         => "required|max_length[20]|is_unique[tbl_siswa.nisn,id_siswa,$id]",
+            'nisn'         => $nisnRule,
             'nama_siswa'   => 'required|max_length[100]',
             'id_kelas'     => 'required|integer',
             'jenis_kelamin'=> 'required|in_list[L,P]',
