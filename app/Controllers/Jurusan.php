@@ -32,7 +32,8 @@ class Jurusan extends BaseController
     public function tambah()
     {
         return view('MasterJurusan/input-jurusan', [
-            'guru_list' => $this->guruModel->findAll(),
+            'guru_list'       => $this->guruModel->findAll(),
+            'used_kaprog_ids' => $this->model->getUsedKaprogIds(),
         ]);
     }
 
@@ -46,15 +47,25 @@ class Jurusan extends BaseController
 
         if (! $this->validate($rules)) {
             return view('MasterJurusan/input-jurusan', [
-                'errors'    => $this->validator->getErrors(),
-                'guru_list' => $this->guruModel->findAll(),
+                'errors'          => $this->validator->getErrors(),
+                'guru_list'       => $this->guruModel->findAll(),
+                'used_kaprog_ids' => $this->model->getUsedKaprogIds(),
+            ]);
+        }
+
+        $idKaprog = $this->request->getPost('id_kaprog');
+        if ($idKaprog !== null && $idKaprog !== '' && $this->model->isKaprogUsed((int) $idKaprog)) {
+            return view('MasterJurusan/input-jurusan', [
+                'errors'          => ['id_kaprog' => 'Guru ini sudah menjadi kepala program pada jurusan lain.'],
+                'guru_list'       => $this->guruModel->findAll(),
+                'used_kaprog_ids' => $this->model->getUsedKaprogIds(),
             ]);
         }
 
         $this->model->insert([
             'kode_jurusan' => strtoupper($this->request->getPost('kode_jurusan')),
             'nama_jurusan' => $this->request->getPost('nama_jurusan'),
-            'id_kaprog'    => $this->request->getPost('id_kaprog') ?: null,
+            'id_kaprog'    => $idKaprog ?: null,
         ]);
 
         return redirect()->to(base_url('jurusan'))->with('success', 'Jurusan berhasil ditambahkan.');
@@ -68,8 +79,9 @@ class Jurusan extends BaseController
         }
 
         return view('MasterJurusan/edit-jurusan', [
-            'jurusan'   => $jurusan,
-            'guru_list' => $this->guruModel->findAll(),
+            'jurusan'         => $jurusan,
+            'guru_list'       => $this->guruModel->findAll(),
+            'used_kaprog_ids' => $this->model->getUsedKaprogIds((int) $id),
         ]);
     }
 
@@ -84,16 +96,28 @@ class Jurusan extends BaseController
         if (! $this->validate($rules)) {
             $jurusan = $this->model->find($id);
             return view('MasterJurusan/edit-jurusan', [
-                'jurusan'   => $jurusan,
-                'errors'    => $this->validator->getErrors(),
-                'guru_list' => $this->guruModel->findAll(),
+                'jurusan'         => $jurusan,
+                'errors'          => $this->validator->getErrors(),
+                'guru_list'       => $this->guruModel->findAll(),
+                'used_kaprog_ids' => $this->model->getUsedKaprogIds((int) $id),
+            ]);
+        }
+
+        $idKaprog = $this->request->getPost('id_kaprog');
+        if ($idKaprog !== null && $idKaprog !== '' && $this->model->isKaprogUsed((int) $idKaprog, (int) $id)) {
+            $jurusan = $this->model->find($id);
+            return view('MasterJurusan/edit-jurusan', [
+                'jurusan'         => $jurusan,
+                'errors'          => ['id_kaprog' => 'Guru ini sudah menjadi kepala program pada jurusan lain.'],
+                'guru_list'       => $this->guruModel->findAll(),
+                'used_kaprog_ids' => $this->model->getUsedKaprogIds((int) $id),
             ]);
         }
 
         $this->model->update($id, [
             'kode_jurusan' => strtoupper($this->request->getPost('kode_jurusan')),
             'nama_jurusan' => $this->request->getPost('nama_jurusan'),
-            'id_kaprog'    => $this->request->getPost('id_kaprog') ?: null,
+            'id_kaprog'    => $idKaprog ?: null,
         ]);
 
         return redirect()->to(base_url('jurusan'))->with('success', 'Jurusan berhasil diperbarui.');

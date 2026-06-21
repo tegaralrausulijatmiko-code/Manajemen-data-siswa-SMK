@@ -39,11 +39,14 @@
                 <select name="id_kaprog" class="form-control">
                     <option value="">-- Pilih Guru --</option>
                     <?php foreach ($guru_list as $g): ?>
-                    <option value="<?= $g['id_guru'] ?>" <?= $jurusan['id_kaprog'] == $g['id_guru'] ? 'selected' : '' ?>>
+                    <option value="<?= $g['id_guru'] ?>" <?= old('id_kaprog', $jurusan['id_kaprog']) == $g['id_guru'] ? 'selected' : '' ?> <?= in_array($g['id_guru'], $used_kaprog_ids ?? [], true) && (string) $jurusan['id_kaprog'] !== (string) $g['id_guru'] ? 'disabled' : '' ?>>
                         <?= esc($g['nama_guru']) ?> (<?= esc($g['nip']) ?>)
                     </option>
                     <?php endforeach; ?>
                 </select>
+                <?php if (isset($errors['id_kaprog'])): ?>
+                    <small style="color:var(--danger);"><?= $errors['id_kaprog'] ?></small>
+                <?php endif; ?>
             </div>
 
             <div class="form-actions">
