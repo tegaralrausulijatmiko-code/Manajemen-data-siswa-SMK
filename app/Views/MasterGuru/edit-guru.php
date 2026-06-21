@@ -21,7 +21,10 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">NIP <span class="required">*</span></label>
-                    <input type="text" name="nip" class="form-control" value="<?= esc($guru['nip']) ?>" required maxlength="20">
+                    <input type="text" name="nip" class="form-control" placeholder="NIP (18 digit)" value="<?= esc($guru['nip']) ?>" required maxlength="18" inputmode="numeric" pattern="[0-9]{18}">
+                    <?php if (isset($errors['nip'])): ?>
+                        <small style="color:var(--danger);"><?= $errors['nip'] ?></small>
+                    <?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Jenis Kelamin <span class="required">*</span></label>
