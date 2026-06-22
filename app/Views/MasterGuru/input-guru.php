@@ -21,9 +21,9 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">NIP <span class="required">*</span></label>
-                    <input type="text" name="nip" class="form-control" placeholder="cth: 1987654321" value="<?= old('nip') ?>" required maxlength="20">
-                    <?php if (isset($errors['id_guru'])): ?>
-                        <small style="color:var(--danger);"><?= $errors['id_guru'] ?></small>
+                    <input type="text" name="nip" class="form-control" placeholder="NIP (18 digit)" value="<?= old('nip') ?>" required maxlength="18" inputmode="numeric" pattern="[0-9]{18}">
+                    <?php if (isset($errors['nip'])): ?>
+                        <small style="color:var(--danger);"><?= $errors['nip'] ?></small>
                     <?php endif; ?>
                 </div>
                 <div class="form-group">

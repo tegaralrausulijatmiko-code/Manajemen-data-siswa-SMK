@@ -21,7 +21,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">NISN <span class="required">*</span></label>
-                    <input type="text" name="nisn" class="form-control" value="<?= esc($siswa['nisn']) ?>" required maxlength="20">
+                    <input type="text" name="nisn" class="form-control" placeholder="NISN (10 digit)"   value="<?= esc($siswa['nisn']) ?>" required maxlength="10" inputmode="numeric" pattern="[0-9]{10}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Jenis Kelamin <span class="required">*</span></label>

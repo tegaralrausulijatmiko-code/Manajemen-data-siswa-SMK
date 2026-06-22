@@ -1,4 +1,15 @@
 <?php ob_start(); ?>
+<?php $errors = $errors ?? session('errors') ?? []; ?>
+<?php $kelas = $kelas ?? []; ?>
+<?php $jurusan_list = $jurusan_list ?? []; ?>
+<?php $guru_list = $guru_list ?? []; ?>
+<?php
+    $namaKelas   = old('nama_kelas', $kelas['nama_kelas'] ?? '');
+    $tingkat     = old('tingkat', $kelas['tingkat'] ?? '');
+    $jurusanId   = old('id_jurusan', $kelas['id_jurusan'] ?? '');
+    $waliKelasId = old('id_wali_kelas', $kelas['id_wali_kelas'] ?? '');
+    $jumlahSiswa = old('jumlah_siswa', $kelas['jumlah_siswa'] ?? 0);
+?>
 
 <div class="page-header">
     <div>
@@ -21,13 +32,16 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Nama Kelas <span class="required">*</span></label>
-                    <input type="text" name="nama_kelas" class="form-control" value="<?= esc($kelas['nama_kelas']) ?>" required maxlength="50">
+                    <input type="text" name="nama_kelas" class="form-control" value="<?= esc($namaKelas) ?>" required maxlength="50">
+                    <?php if (isset($errors['nama_kelas'])): ?>
+                    <small style="color:var(--danger);"><?= $errors['nama_kelas'] ?></small>
+                    <?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Tingkat <span class="required">*</span></label>
                     <select name="tingkat" class="form-control" required>
                         <?php foreach (['X','XI','XII'] as $t): ?>
-                        <option value="<?= $t ?>" <?= $kelas['tingkat'] == $t ? 'selected':'' ?>><?= $t ?></option>
+                        <option value="<?= $t ?>" <?= $tingkat == $t ? 'selected':'' ?>><?= $t ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -37,7 +51,7 @@
                 <label class="form-label">Jurusan <span class="required">*</span></label>
                 <select name="id_jurusan" class="form-control" required>
                     <?php foreach ($jurusan_list as $j): ?>
-                    <option value="<?= $j['id_jurusan'] ?>" <?= $kelas['id_jurusan'] == $j['id_jurusan'] ? 'selected':'' ?>>
+                    <option value="<?= $j['id_jurusan'] ?>" <?= $jurusanId == $j['id_jurusan'] ? 'selected':'' ?>>
                         <?= esc($j['kode_jurusan']) ?> – <?= esc($j['nama_jurusan']) ?>
                     </option>
                     <?php endforeach; ?>
@@ -49,16 +63,19 @@
                 <select name="id_wali_kelas" class="form-control">
                     <option value="">-- Tidak Ada --</option>
                     <?php foreach ($guru_list as $g): ?>
-                    <option value="<?= $g['id_guru'] ?>" <?= $kelas['id_wali_kelas'] == $g['id_guru'] ? 'selected':'' ?>>
+                    <option value="<?= $g['id_guru'] ?>" <?= $waliKelasId == $g['id_guru'] ? 'selected':'' ?>>
                         <?= esc($g['nama_guru']) ?>
                     </option>
                     <?php endforeach; ?>
                 </select>
+                <?php if (isset($errors['id_wali_kelas'])): ?>
+                <small style="color:var(--danger);"><?= $errors['id_wali_kelas'] ?></small>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Jumlah Siswa</label>
-                <input type="number" name="jumlah_siswa" class="form-control" value="<?= esc($kelas['jumlah_siswa']) ?>" min="0">
+                <input type="number" name="jumlah_siswa" class="form-control" value="<?= esc($jumlahSiswa) ?>" min="0">
             </div>
 
             <div class="form-actions">

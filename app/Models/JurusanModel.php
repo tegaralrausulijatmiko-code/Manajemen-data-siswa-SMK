@@ -43,6 +43,31 @@ class JurusanModel extends Model
             ->get()->getResultArray();
     }
 
+    public function getUsedKaprogIds(?int $excludeJurusanId = null): array
+    {
+        $builder = $this->db->table('tbl_jurusan')
+            ->select('id_kaprog')
+            ->where('id_kaprog IS NOT NULL', null, false);
+
+        if ($excludeJurusanId !== null) {
+            $builder->where('id_jurusan !=', $excludeJurusanId);
+        }
+
+        return array_values(array_filter(array_column($builder->get()->getResultArray(), 'id_kaprog')));
+    }
+
+    public function isKaprogUsed(int $guruId, ?int $excludeJurusanId = null): bool
+    {
+        $builder = $this->db->table('tbl_jurusan')
+            ->where('id_kaprog', $guruId);
+
+        if ($excludeJurusanId !== null) {
+            $builder->where('id_jurusan !=', $excludeJurusanId);
+        }
+
+        return $builder->countAllResults() > 0;
+    }
+
     public function getJurusanWithStats(): array
     {
         return $this->db->table('tbl_jurusan j')

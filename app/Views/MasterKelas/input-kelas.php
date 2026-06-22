@@ -1,4 +1,7 @@
 <?php ob_start(); ?>
+<?php $errors = $errors ?? session('errors') ?? []; ?>
+<?php $jurusan_list = $jurusan_list ?? []; ?>
+<?php $guru_list = $guru_list ?? []; ?>
 
 <div class="page-header">
     <div>
@@ -27,8 +30,17 @@
                     <small style="color:var(--danger);"><?= $errors['nama_kelas'] ?></small>
                     <?php endif; ?>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Tingkat <span class="required">*</span></label>
+                        <select name="tingkat" class="form-control" required>
+                            <option value="">-- Pilih --</option>
+                            <?php foreach (['X','XI','XII'] as $t): ?>
+                            <option value="<?= $t ?>" <?= old('tingkat') == $t ? 'selected':'' ?>><?= $t ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                </div>
             </div>
-                
+            
             <div class="form-group">
                 <label class="form-label">Jurusan <span class="required">*</span></label>
                 <select name="id_jurusan" class="form-control" required>
@@ -42,16 +54,6 @@
                 </select>
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Tingkat <span class="required">*</span></label>
-                    <select name="tingkat" class="form-control" required>
-                        <option value="">-- Pilih --</option>
-                        <?php foreach (['X','XI','XII'] as $t): ?>
-                        <option value="<?= $t ?>" <?= old('tingkat') == $t ? 'selected':'' ?>><?= $t ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
 
             <div class="form-group">
                 <label class="form-label">Wali Kelas (Opsional)</label>
@@ -63,6 +65,9 @@
                     </option>
                     <?php endforeach; ?>
                 </select>
+                <?php if (isset($errors['id_wali_kelas'])): ?>
+                <small style="color:var(--danger);"><?= $errors['id_wali_kelas'] ?></small>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">

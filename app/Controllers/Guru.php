@@ -33,7 +33,7 @@ class Guru extends BaseController
     public function simpan()
     {
         $rules = [
-            'nip'          => 'required|max_length[20]|is_unique[tbl_guru.nip]',
+            'nip'          => 'required|regex_match[/^\\d{18}$/]|is_unique[tbl_guru.nip]',
             'nama_guru'    => 'required|max_length[100]',
             'jenis_kelamin'=> 'required|in_list[L,P]',
         ];
@@ -68,7 +68,7 @@ class Guru extends BaseController
     public function update($id)
     {
         $rules = [
-            'nip'          => "required|max_length[20]|is_unique[tbl_guru.nip,id_guru,$id]",
+            'nip'          => "required|regex_match[/^\\d{18}$/]|is_unique[tbl_guru.nip,id_guru,$id]",
             'nama_guru'    => 'required|max_length[100]',
             'jenis_kelamin'=> 'required|in_list[L,P]',
         ];

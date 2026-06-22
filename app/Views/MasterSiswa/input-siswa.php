@@ -21,7 +21,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">NISN <span class="required">*</span></label>
-                    <input type="text" name="nisn" class="form-control" placeholder="cth: 0012345678" value="<?= old('nisn') ?>" required maxlength="20">
+                    <input type="text" name="nisn" class="form-control" placeholder="NISN (10 digit)" value="<?= old('nisn') ?>" required maxlength="10" inputmode="numeric" pattern="[0-9]{10}">
                     <?php if (isset($errors['nisn'])): ?>
                         <small style="color:var(--danger);"><?= $errors['nisn'] ?></small>
                     <?php endif; ?>

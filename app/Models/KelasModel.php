@@ -48,4 +48,26 @@ class KelasModel extends Model
             ->orderBy('k.tingkat')->orderBy('k.nama_kelas')
             ->get()->getResultArray();
     }
+
+    public function isNamaKelasTaken(string $namaKelas, ?int $excludeId = null): bool
+    {
+        $builder = $this->builder()->where('nama_kelas', $namaKelas);
+
+        if ($excludeId !== null) {
+            $builder->where('id_kelas !=', $excludeId);
+        }
+
+        return $builder->countAllResults() > 0;
+    }
+
+    public function isWaliKelasUsed(int $idGuru, ?int $excludeId = null): bool
+    {
+        $builder = $this->builder()->where('id_wali_kelas', $idGuru);
+
+        if ($excludeId !== null) {
+            $builder->where('id_kelas !=', $excludeId);
+        }
+
+        return $builder->countAllResults() > 0;
+    }
 }
