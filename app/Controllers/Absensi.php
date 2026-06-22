@@ -25,19 +25,117 @@ class Absensi extends BaseController
     public function index()
     {
         $keyword = $this->request->getGet('q');
-        $tanggal = $this->request->getGet('tanggal');
+        $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
         $kelas   = $this->request->getGet('kelas');
 
-        $paged = $this->paginateArray($this->model->getAll($keyword, $tanggal, $kelas), 10);
+        $siswaList  = $this->siswaModel->getAll($keyword, $kelas);
+        $attendance = $this->model->getByDateAndKelas($tanggal, $kelas);
 
         return view('MasterAbsensi/master-data-absensi', [
-            'absensi'      => $paged['items'],
-            'kelas_list'   => $this->kelasModel->getKelasWithJurusan(),
-            'keyword'      => $keyword,
+            'siswa_list'     => $siswaList,
+            'attendance_map' => $attendance,
+            'kelas_list'     => $this->kelasModel->getKelasWithJurusan(),
+            'keyword'        => $keyword,
             'filter_tanggal' => $tanggal,
-            'filter_kelas' => $kelas,
-            'pagination'   => $paged['pagination'],
+            'filter_kelas'   => $kelas,
         ]);
+    }
+
+    public function point($id_siswa)
+    {
+        $status     = $this->request->getPost('status');
+        $tanggal    = $this->request->getPost('tanggal') ?: date('Y-m-d');
+        $id_kelas   = $this->request->getPost('id_kelas');
+        $keterangan = $status === 'Izin' ? trim((string) $this->request->getPost('keterangan')) : '';
+
+        if (! in_array($status, ['Hadir', 'Izin', 'Alpa'], true)) {
+            return redirect()->back()->with('error', 'Status absensi tidak valid.');
+        }
+
+        $data = [
+            'id_siswa'   => $id_siswa,
+            'id_kelas'   => $id_kelas,
+            'tanggal'    => $tanggal,
+            'status'     => $status,
+            'keterangan' => $keterangan,
+        ];
+
+        $existing = $this->model->where(['id_siswa' => $id_siswa, 'tanggal' => $tanggal])->first();
+        if ($existing) {
+            $this->model->update($existing['id_absensi'], $data);
+        } else {
+            $this->model->insert($data);
+        }
+
+        $queryParams = [];
+        if ($kelas = $this->request->getPost('kelas')) {
+            $queryParams['kelas'] = $kelas;
+        }
+        if ($tanggal = $this->request->getPost('tanggal')) {
+            $queryParams['tanggal'] = $tanggal;
+        }
+        if ($q = $this->request->getPost('q')) {
+            $queryParams['q'] = $q;
+        }
+
+        $query    = http_build_query($queryParams);
+        $redirect = base_url('absensi' . ($query ? '?' . $query : ''));
+        return redirect()->to($redirect)->with('success', "Absensi siswa berhasil disimpan: {$status}.");
+    }
+
+    public function simpanAbsensi()
+    {
+        $statuses      = $this->request->getPost('status') ?? [];
+        $idKelasMap    = $this->request->getPost('id_kelas') ?? [];
+        $keteranganMap = $this->request->getPost('keterangan') ?? [];
+        $validStatuses = ['Belum Absen', 'Hadir', 'Izin', 'Alpa'];
+
+        foreach ($statuses as $id_siswa => $status) {
+            if (! in_array($status, $validStatuses, true)) {
+                continue;
+            }
+
+            $existing = $this->model->where(['id_siswa' => $id_siswa, 'tanggal' => $this->request->getPost('tanggal')])->first();
+
+            if ($status === 'Belum Absen') {
+                if ($existing) {
+                    $this->model->delete($existing['id_absensi']);
+                }
+                continue;
+            }
+
+            // Keterangan hanya berlaku untuk status Izin
+            $keterangan = $status === 'Izin' ? trim((string) ($keteranganMap[$id_siswa] ?? '')) : '';
+
+            $data = [
+                'id_siswa'   => $id_siswa,
+                'id_kelas'   => $idKelasMap[$id_siswa] ?? null,
+                'tanggal'    => $this->request->getPost('tanggal') ?: date('Y-m-d'),
+                'status'     => $status,
+                'keterangan' => $keterangan,
+            ];
+
+            if ($existing) {
+                $this->model->update($existing['id_absensi'], $data);
+            } else {
+                $this->model->insert($data);
+            }
+        }
+
+        $queryParams = [];
+        if ($kelas = $this->request->getPost('kelas')) {
+            $queryParams['kelas'] = $kelas;
+        }
+        if ($tanggal = $this->request->getPost('tanggal')) {
+            $queryParams['tanggal'] = $tanggal;
+        }
+        if ($q = $this->request->getPost('q')) {
+            $queryParams['q'] = $q;
+        }
+
+        $query    = http_build_query($queryParams);
+        $redirect = base_url('absensi' . ($query ? '?' . $query : ''));
+        return redirect()->to($redirect)->with('success', 'Perubahan absensi berhasil disimpan.');
     }
 
     public function tambah()

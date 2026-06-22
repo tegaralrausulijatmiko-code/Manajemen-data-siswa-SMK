@@ -46,6 +46,22 @@ class AbsensiModel extends Model
         return $builder->orderBy('a.tanggal', 'DESC')->orderBy('s.nama_siswa')->get()->getResultArray();
     }
 
+    public function getByDateAndKelas(string $tanggal, ?string $id_kelas = null): array
+    {
+        $builder = $this->db->table('tbl_absensi a')
+            ->select('a.*, s.id_siswa, s.nisn, s.nama_siswa, k.nama_kelas')
+            ->join('tbl_siswa s', 's.id_siswa = a.id_siswa', 'left')
+            ->join('tbl_kelas k', 'k.id_kelas = a.id_kelas', 'left')
+            ->where('a.tanggal', $tanggal);
+
+        if ($id_kelas) {
+            $builder->where('a.id_kelas', $id_kelas);
+        }
+
+        $rows = $builder->get()->getResultArray();
+        return array_column($rows, null, 'id_siswa');
+    }
+
     public function getByJadwalDate(int $idJadwal, string $tanggal): array
     {
         $rows = $this->where('id_jadwal', $idJadwal)
