@@ -53,7 +53,7 @@
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
                     <td><strong><?= esc($k['nama_kelas']) ?></strong></td>
                     <td><?= esc($k['nama_jurusan'] ?? '-') ?></td>
-                    <td><span class="badge badge-l"><?= esc($k['tingkat']) ?></span></td>
+                    <td><span class="badge <?= $k['tingkat'] === 'X' ? 'badge-l' : ($k['tingkat'] === 'XI' ? 'badge-aktif' : ($k['tingkat'] === 'XII' ? 'badge-p' : 'badge-nonaktif')) ?>"><?= esc($k['tingkat']) ?></span></td>
                     <td><?= esc($k['nama_guru'] ?? '-') ?></td>
                     <td><?= $k['jumlah_siswa'] ?></td>
                     <td>

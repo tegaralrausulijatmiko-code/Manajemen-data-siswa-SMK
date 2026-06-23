@@ -52,7 +52,7 @@
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
                     <td><strong><?= esc($m['kode_mapel']) ?></strong></td>
                     <td><?= esc($m['nama_mapel']) ?></td>
-                    <td><span class="badge badge-light"><?= esc($m['tingkat']) ?></span></td>
+                    <td><span class="badge <?= $m['tingkat'] === 'X' ? 'badge-l' : ($m['tingkat'] === 'XI' ? 'badge-aktif' : ($m['tingkat'] === 'XII' ? 'badge-p' : 'badge-nonaktif')) ?>"><?= esc($m['tingkat']) ?></span></td>
                     <td><?= esc($m['nama_guru']) ?></td>
                     <td>
                         <span class="badge <?= $m['status'] == 'Produktif' ? 'badge-prod' : 'badge-non-prod' ?>">
