@@ -11,7 +11,7 @@ class MapelModel extends Model
     protected $returnType = 'array';
 
     protected $allowedFields = [
-        'kode_mapel', 'nama_mapel', 'status', 'id_kelas', 'id_guru',
+        'kode_mapel', 'nama_mapel', 'status', 'tingkat', 'id_guru',
     ];
 
     protected $useTimestamps = true;
@@ -21,15 +21,14 @@ class MapelModel extends Model
     public function getAll(?string $keyword = null, ?string $status = null): array
     {
         $builder = $this->db->table('tbl_mata_pelajaran m')
-            ->select('m.*, k.nama_kelas, k.tingkat, g.nama_guru')
-            ->join('tbl_kelas k', 'k.id_kelas = m.id_kelas', 'left')
+            ->select('m.*, m.tingkat, g.nama_guru')
             ->join('tbl_guru g', 'g.id_guru = m.id_guru', 'left');
 
         if ($keyword) {
             $builder->groupStart()
                 ->like('m.nama_mapel', $keyword)
                 ->orLike('m.kode_mapel', $keyword)
-                ->orLike('k.nama_kelas', $keyword)
+                ->orLike('m.tingkat', $keyword)
                 ->orLike('g.nama_guru', $keyword)
             ->groupEnd();
         }

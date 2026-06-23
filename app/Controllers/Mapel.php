@@ -37,9 +37,10 @@ class Mapel extends BaseController
     public function tambah()
     {
         return view('MasterMapel/input-mapel', [
-            'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
-            'guru_list'  => $this->guruModel->findAll(),
             'next_kode'  => $this->model->getNextKodeMapel(),
+            'guru_list'  => $this->guruModel->findAll(),
+            'nama_mapel'   => $this->request->getPost('nama_mapel'),
+            'status'     => $this->request->getPost('status'),
         ]);
     }
 
@@ -48,7 +49,7 @@ class Mapel extends BaseController
         $rules = [
             'kode_mapel' => 'required|max_length[10]|is_unique[tbl_mata_pelajaran.kode_mapel]',
             'nama_mapel' => 'required|max_length[100]',
-            'id_kelas'   => 'required|integer',
+            'tingkat'   => 'required|in_list[X,XI,XII]',
             'id_guru'    => 'required|integer',
             'status'     => 'required|in_list[Produktif,Non Produktif]',
         ];
@@ -56,9 +57,11 @@ class Mapel extends BaseController
         if (! $this->validate($rules)) {
             return view('MasterMapel/input-mapel', [
                 'errors'     => $this->validator->getErrors(),
-                'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
+                'nama_mapel'   => $this->request->getPost('nama_mapel'),
+                'tingkat'    => $this->request->getPost('tingkat'),
                 'guru_list'  => $this->guruModel->findAll(),
                 'next_kode'  => $this->model->getNextKodeMapel(),
+                'status'     => $this->request->getPost('status'),
             ]);
         }
 
@@ -67,7 +70,7 @@ class Mapel extends BaseController
         $this->model->insert([
             'kode_mapel' => $kodeMapel,
             'nama_mapel' => $this->request->getPost('nama_mapel'),
-            'id_kelas'   => $this->request->getPost('id_kelas'),
+            'tingkat'    => $this->request->getPost('tingkat'),
             'id_guru'    => $this->request->getPost('id_guru'),
             'status'     => $this->request->getPost('status'),
         ]);
@@ -84,6 +87,7 @@ class Mapel extends BaseController
 
         return view('MasterMapel/edit-mapel', [
             'mapel'      => $mapel,
+            'tingkat'    => $this->request->getPost('tingkat'),
             'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
             'guru_list'  => $this->guruModel->findAll(),
         ]);
@@ -94,7 +98,7 @@ class Mapel extends BaseController
         $rules = [
             'kode_mapel' => "required|max_length[10]|is_unique[tbl_mata_pelajaran.kode_mapel,id_mapel,$id]",
             'nama_mapel' => 'required|max_length[100]',
-            'id_kelas'   => 'required|integer',
+            'tingkat'   => 'required|in_list[X,XI,XII]',
             'id_guru'    => 'required|integer',
             'status'     => 'required|in_list[Produktif,Non Produktif]',
         ];
@@ -104,6 +108,7 @@ class Mapel extends BaseController
             return view('MasterMapel/edit-mapel', [
                 'mapel'      => $mapel,
                 'errors'     => $this->validator->getErrors(),
+                'tingkat'    => $this->request->getPost('tingkat'),
                 'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
                 'guru_list'  => $this->guruModel->findAll(),
             ]);
@@ -112,7 +117,7 @@ class Mapel extends BaseController
         $this->model->update($id, [
             'kode_mapel' => $this->request->getPost('kode_mapel'),
             'nama_mapel' => $this->request->getPost('nama_mapel'),
-            'id_kelas'   => $this->request->getPost('id_kelas'),
+            'tingkat'   => $this->request->getPost('tingkat'),
             'id_guru'    => $this->request->getPost('id_guru'),
             'status'     => $this->request->getPost('status'),
         ]);

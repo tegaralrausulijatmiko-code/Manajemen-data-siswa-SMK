@@ -34,11 +34,10 @@
                     <select name="tingkat" class="form-control" required>
                         <option value="">-- Pilih --</option>
                         <?php foreach (['X','XI','XII'] as $t): ?>
-                        <option value="<?= $t ?>" <?= old('tbl_kelas.tingkat') == $t ? 'selected':'' ?>><?= $t ?></option>
+                        <option value="<?= $t ?>" <?= old('tingkat') == $t ? 'selected':'' ?>><?= $t ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-            </div>
                     <div class="form-group">
                     <label class="form-label">Guru Pengampu <span class="required">*</span></label>
                     <select name="id_guru" class="form-control" required>

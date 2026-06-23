@@ -34,13 +34,11 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Kelas<span class="required">*</span></label>
-                    <select name="id_kelas" class="form-control" required>
-                        <option value="">-- Pilih Kelas --</option>
-                        <?php foreach ($kelas_list as $kelas): ?>
-                            <option value="<?= $kelas['id_kelas'] ?>" <?= $mapel['id_kelas'] == $kelas['id_kelas'] ? 'selected' : '' ?>>
-                                <?= esc($kelas['nama_kelas']) . ' / ' . esc($kelas['nama_jurusan'] ?? '') ?>
-                            </option>
+                <label class="form-label">Tingkat <span class="required">*</span></label>
+                    <select name="tingkat" class="form-control" required>
+                        <option value="">-- Pilih --</option>
+                        <?php foreach (['X','XI','XII'] as $t): ?>
+                        <option value="<?= $t ?>" <?= $mapel['tingkat'] == $t ? 'selected':'' ?>><?= $t ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
