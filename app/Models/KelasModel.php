@@ -70,4 +70,9 @@ class KelasModel extends Model
 
         return $builder->countAllResults() > 0;
     }
+
+    public function getJumSiswa(): int
+    {
+        return random_int(30, 40);
+    }
 }

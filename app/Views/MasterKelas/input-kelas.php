@@ -70,12 +70,6 @@
                 <?php endif; ?>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Jumlah Siswa</label>
-                <input type="number" name="jumlah_siswa" class="form-control" value="<?= old('jumlah_siswa', 0) ?>"
-                    min="0">
-            </div>
-
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary"><i class="ri-save-line"></i> Simpan</button>
                 <a href="<?= base_url('kelas') ?>" class="btn btn-secondary">Batal</a>

@@ -49,15 +49,13 @@ class Kelas extends BaseController
             'nama_kelas'    => trim((string) $this->request->getPost('nama_kelas')),
             'tingkat'       => $this->request->getPost('tingkat'),
             'id_wali_kelas' => $this->request->getPost('id_wali_kelas'),
-            'jumlah_siswa'  => $this->request->getPost('jumlah_siswa'),
         ];
 
         $rules = [
-            'nama_kelas' => 'required|max_length[50]',
-            'tingkat'    => 'required|in_list[X,XI,XII]',
-            'id_jurusan' => 'required|integer',
+            'nama_kelas'    => 'required|max_length[50]',
+            'tingkat'       => 'required|in_list[X,XI,XII]',
+            'id_jurusan'    => 'required|integer',
             'id_wali_kelas' => 'permit_empty|integer',
-            'jumlah_siswa'  => 'permit_empty|integer',
         ];
 
         $messages = [
@@ -88,7 +86,7 @@ class Kelas extends BaseController
             'nama_kelas'    => $data['nama_kelas'],
             'tingkat'       => $data['tingkat'],
             'id_wali_kelas' => $idWaliKelas ?: null,
-            'jumlah_siswa'  => $data['jumlah_siswa'] ?: 0,
+            'jumlah_siswa'  => $this->model->getJumSiswa(),
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil ditambahkan.');
@@ -120,15 +118,13 @@ class Kelas extends BaseController
             'nama_kelas'    => trim((string) $this->request->getPost('nama_kelas')),
             'tingkat'       => $this->request->getPost('tingkat'),
             'id_wali_kelas' => $this->request->getPost('id_wali_kelas'),
-            'jumlah_siswa'  => $this->request->getPost('jumlah_siswa'),
         ];
 
         $rules = [
-            'nama_kelas'     => 'required|max_length[50]',
-            'tingkat'        => 'required|in_list[X,XI,XII]',
-            'id_jurusan'     => 'required|integer',
-            'id_wali_kelas'  => 'permit_empty|integer',
-            'jumlah_siswa'   => 'permit_empty|integer',
+            'nama_kelas'    => 'required|max_length[50]',
+            'tingkat'       => 'required|in_list[X,XI,XII]',
+            'id_jurusan'    => 'required|integer',
+            'id_wali_kelas' => 'permit_empty|integer',
         ];
 
         $messages = [
@@ -159,7 +155,6 @@ class Kelas extends BaseController
             'nama_kelas'    => $data['nama_kelas'],
             'tingkat'       => $data['tingkat'],
             'id_wali_kelas' => $idWaliKelas ?: null,
-            'jumlah_siswa'  => $data['jumlah_siswa'] ?: 0,
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil diperbarui.');

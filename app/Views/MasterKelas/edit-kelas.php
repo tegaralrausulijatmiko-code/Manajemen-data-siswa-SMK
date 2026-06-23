@@ -8,7 +8,6 @@
     $tingkat     = old('tingkat', $kelas['tingkat'] ?? '');
     $jurusanId   = old('id_jurusan', $kelas['id_jurusan'] ?? '');
     $waliKelasId = old('id_wali_kelas', $kelas['id_wali_kelas'] ?? '');
-    $jumlahSiswa = old('jumlah_siswa', $kelas['jumlah_siswa'] ?? 0);
 ?>
 
 <div class="page-header">
@@ -71,11 +70,6 @@
                 <?php if (isset($errors['id_wali_kelas'])): ?>
                 <small style="color:var(--danger);"><?= $errors['id_wali_kelas'] ?></small>
                 <?php endif; ?>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Jumlah Siswa</label>
-                <input type="number" name="jumlah_siswa" class="form-control" value="<?= esc($jumlahSiswa) ?>" min="0">
             </div>
 
             <div class="form-actions">
