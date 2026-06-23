@@ -105,7 +105,7 @@
                             <td><?= esc(($row['hari'] ?? '-') . ', ' . substr($row['jam_mulai'] ?? '', 0, 5) . ' - ' . substr($row['jam_selesai'] ?? '', 0, 5)) ?></td>
                             <td><?= esc($row['nama_mapel'] ?? '-') ?></td>
                             <td><?= esc($row['nama_guru'] ?? '-') ?></td>
-                            <td><span class="badge <?= $row['status'] === 'Hadir' ? 'badge-aktif' : 'badge-warning' ?>"><?= esc($row['status']) ?></span></td>
+                            <td><span class="badge <?= $row['status'] === 'Hadir' ? 'badge-aktif' : ($row['status'] === 'Izin' ? 'badge-warning' : ($row['status'] === 'Alpa' ? 'btn-danger' : 'badge-nonaktif')) ?>"><?= esc($row['status']) ?></span></td>
                             <td><?= esc($row['keterangan'] ?: '-') ?></td>
                         </tr>
                     <?php endforeach; ?>
