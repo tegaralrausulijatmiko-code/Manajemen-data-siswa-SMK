@@ -99,6 +99,8 @@
         .btn-warning { background-color: #fef3c7; color: #92400e; }
         .btn-warning:hover { background-color: #fde68a; }
         .btn-secondary { background-color: var(--bg-light); color: var(--text-dark); border: 1px solid var(--border); }
+        .btn-info { background: #3b82f6; /* Biru */ color: #fff; }
+        .btn-info:hover {background: #2563eb;}
 
         /* Forms */
         .form-group { margin-bottom: 16px; }

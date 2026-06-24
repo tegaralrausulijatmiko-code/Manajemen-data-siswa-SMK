@@ -57,6 +57,9 @@
                     <td><?= esc($k['nama_guru'] ?? '-') ?></td>
                     <td><?= $k['jumlah_siswa'] ?></td>
                     <td>
+                        <a href="<?= base_url('kelas/show/' . $k['id_kelas']) ?>" class="btn btn-info btn-sm">
+                            <i class="ri-eye-line"></i> Show
+                        </a>
                         <a href="<?= base_url('kelas/edit/' . $k['id_kelas']) ?>" class="btn btn-edit btn-sm">
                             <i class="ri-edit-line"></i> Edit
                         </a>

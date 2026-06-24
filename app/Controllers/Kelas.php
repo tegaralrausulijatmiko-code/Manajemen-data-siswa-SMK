@@ -86,7 +86,7 @@ class Kelas extends BaseController
             'nama_kelas'    => $data['nama_kelas'],
             'tingkat'       => $data['tingkat'],
             'id_wali_kelas' => $idWaliKelas ?: null,
-            'jumlah_siswa'  => $this->model->getJumSiswa(),
+            // 'jumlah_siswa'  => $this->model->getJumSiswa(),
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil ditambahkan.');
@@ -158,6 +158,19 @@ class Kelas extends BaseController
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil diperbarui.');
+    }
+
+    public function show($id)
+    {
+        $kelas = $this->model->getWithSiswa((int) $id);
+
+        if (! $kelas) {
+            return redirect()->to(base_url('kelas'))->with('error', 'Data kelas tidak ditemukan.');
+        }
+
+        return view('MasterKelas/show-kelas', [
+            'kelas' => $kelas,
+        ]);
     }
 
     public function hapus($id)

@@ -18,6 +18,8 @@
         <form method="post" action="<?= base_url('siswa/simpan') ?>" enctype="multipart/form-data">
             <?= csrf_field() ?>
 
+            <input type="hidden" name="redirect_to" value="<?= esc($id_kelas ?? '') ?>">
+
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">NISN <span class="required">*</span></label>
@@ -49,9 +51,10 @@
                 <select name="id_kelas" class="form-control" required>
                     <option value="">-- Pilih Kelas --</option>
                     <?php foreach ($kelas_list as $k): ?>
-                    <option value="<?= $k['id_kelas'] ?>" <?= old('id_kelas') == $k['id_kelas'] ? 'selected':'' ?>>
-                        <?= esc($k['nama_kelas']) ?> (<?= esc($k['nama_jurusan'] ?? '') ?>)
-                    </option>
+                        <option value="<?= $k['id_kelas'] ?>" 
+                            <?= ($id_kelas ?? '') == $k['id_kelas'] ? 'selected' : '' ?>>
+                            <?= esc($k['nama_kelas']) ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>

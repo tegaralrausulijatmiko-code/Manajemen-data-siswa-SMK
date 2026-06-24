@@ -39,11 +39,14 @@ class Siswa extends BaseController
     {
         return view('MasterSiswa/input-siswa', [
             'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
+            'id_kelas'   => $this->request->getGet('id_kelas'), 
         ]);
     }
 
     public function simpan()
     {
+        $redirectKelas = $this->request->getPost('redirect_to'); 
+
         $nisnRule = 'required|regex_match[/^\\d{10}$/]|is_unique[tbl_siswa.nisn]';
 
         $rules = [
@@ -58,6 +61,7 @@ class Siswa extends BaseController
             return view('MasterSiswa/input-siswa', [
                 'errors'     => $this->validator->getErrors(),
                 'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
+                'id_kelas'   => $redirectKelas, 
             ]);
         }
 
@@ -78,7 +82,13 @@ class Siswa extends BaseController
             'foto'          => $fotoName,
         ]);
 
-        return redirect()->to(base_url('siswa'))->with('success', 'Siswa berhasil ditambahkan.');
+        $this->kelasModel->syncJumlahSiswa($this->request->getPost('id_kelas'));
+
+        $redirectUrl = $redirectKelas
+            ? base_url('kelas/show/' . $redirectKelas)
+            : base_url('siswa');
+
+        return redirect()->to($redirectUrl)->with('success', 'Siswa berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -91,11 +101,14 @@ class Siswa extends BaseController
         return view('MasterSiswa/edit-siswa', [
             'siswa'      => $siswa,
             'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
+            'id_kelas'   => $this->request->getGet('id_kelas'), 
         ]);
     }
 
     public function update($id)
     {
+        $redirectKelas = $this->request->getPost('redirect_to'); 
+
         $siswa = $this->model->find($id);
         $nisnRule = "required|regex_match[/^\\d{10}$/]|is_unique[tbl_siswa.nisn,id_siswa,$id]";
 
@@ -112,6 +125,8 @@ class Siswa extends BaseController
                 'siswa'      => $siswa,
                 'errors'     => $this->validator->getErrors(),
                 'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
+                'id_kelas'   => $redirectKelas, 
+
             ]);
         }
 
@@ -136,7 +151,13 @@ class Siswa extends BaseController
             'foto'          => $fotoName,
         ]);
 
-        return redirect()->to(base_url('siswa'))->with('success', 'Data siswa berhasil diperbarui.');
+        $this->kelasModel->syncJumlahSiswa($this->request->getPost('id_kelas'));
+
+        $redirectUrl = $redirectKelas
+            ? base_url('kelas/show/' . $redirectKelas)
+            : base_url('siswa');
+
+        return redirect()->to($redirectUrl)->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     public function hapus($id)
@@ -147,6 +168,9 @@ class Siswa extends BaseController
             if (file_exists($path)) unlink($path);
         }
         $this->model->delete($id);
+
+        $this->kelasModel->syncJumlahSiswa($siswa['id_kelas']);
+
         return redirect()->to(base_url('siswa'))->with('success', 'Siswa berhasil dihapus.');
     }
 }

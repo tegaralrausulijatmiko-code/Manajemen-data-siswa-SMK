@@ -71,8 +71,41 @@ class KelasModel extends Model
         return $builder->countAllResults() > 0;
     }
 
-    public function getJumSiswa(): int
+    // public function getJumSiswa(): int
+    // {
+    //     return random_int(30, 40);
+    // }
+    
+    public function syncJumlahSiswa(int $id_kelas): void
     {
-        return random_int(30, 40);
+        $jumlah = $this->db->table('tbl_siswa')
+            ->where('id_kelas', $id_kelas)
+            ->countAllResults();
+
+        $this->update($id_kelas, ['jumlah_siswa' => $jumlah]);
+    }
+
+    public function getWithSiswa(int $id): ?array
+    {
+        $kelas = $this->db->table('tbl_kelas k')
+            ->select('k.*, j.nama_jurusan, j.kode_jurusan, g.nama_guru')
+            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan', 'left')
+            ->join('tbl_guru g', 'g.id_guru = k.id_wali_kelas', 'left')
+            ->where('k.id_kelas', $id)
+            ->get()->getRowArray();
+
+        if (! $kelas) return null;
+
+        $siswa = $this->db->table('tbl_siswa')
+            ->where('id_kelas', $id)
+            ->orderBy('nama_siswa', 'ASC')
+            ->get()->getResultArray();
+
+        $kelas['siswa']         = $siswa;
+        $kelas['jumlah_siswa']  = count($siswa);
+        $kelas['jumlah_laki']   = count(array_filter($siswa, fn($s) => $s['jenis_kelamin'] === 'L'));
+        $kelas['jumlah_perempuan'] = count(array_filter($siswa, fn($s) => $s['jenis_kelamin'] === 'P'));
+
+        return $kelas;
     }
 }

@@ -18,6 +18,8 @@
         <form method="post" action="<?= base_url('siswa/update/' . $siswa['id_siswa']) ?>" enctype="multipart/form-data">
             <?= csrf_field() ?>
 
+            <input type="hidden" name="redirect_to" value="<?= esc($id_kelas ?? '') ?>">
+
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">NISN <span class="required">*</span></label>

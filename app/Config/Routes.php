@@ -28,6 +28,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get ('kelas/tambah', 'Kelas::tambah');
     $routes->post('kelas/simpan', 'Kelas::simpan');
     $routes->get ('kelas/edit/(:num)', 'Kelas::edit/$1');
+    $routes->get('kelas/show/(:num)', 'Kelas::show/$1');
     $routes->post('kelas/update/(:num)', 'Kelas::update/$1');
     $routes->post('kelas/hapus/(:num)', 'Kelas::hapus/$1');
 
