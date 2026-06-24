@@ -160,8 +160,23 @@ class Siswa extends BaseController
         return redirect()->to($redirectUrl)->with('success', 'Data siswa berhasil diperbarui.');
     }
 
+    public function show($id)
+    {
+        $siswa = $this->model->getDetail($id);
+
+        if (! $siswa) {
+            return redirect()->to(base_url('siswa'))->with('error', 'Data tidak ditemukan.');
+        }
+
+        return view('MasterSiswa/show-siswa', [
+            'siswa' => $siswa,
+        ]);
+    }
+
     public function hapus($id)
     {
+        $redirectKelas = $this->request->getGet('redirect_to'); 
+
         $siswa = $this->model->find($id);
         if ($siswa && ! empty($siswa['foto'])) {
             $path = ROOTPATH . 'public/uploads/' . $siswa['foto'];
@@ -171,6 +186,10 @@ class Siswa extends BaseController
 
         $this->kelasModel->syncJumlahSiswa($siswa['id_kelas']);
 
-        return redirect()->to(base_url('siswa'))->with('success', 'Siswa berhasil dihapus.');
+        $redirectUrl = $redirectKelas
+            ? base_url('kelas/show/' . $redirectKelas)
+            : base_url('siswa');
+
+        return redirect()->to($redirectUrl)->with('success', 'Siswa berhasil dihapus.');
     }
 }

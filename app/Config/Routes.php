@@ -36,6 +36,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get ('siswa', 'Siswa::index');
     $routes->get ('siswa/tambah', 'Siswa::tambah');
     $routes->post('siswa/simpan', 'Siswa::simpan');
+    $routes->get('siswa/show/(:num)', 'Siswa::show/$1');
     $routes->get ('siswa/edit/(:num)', 'Siswa::edit/$1');
     $routes->post('siswa/update/(:num)', 'Siswa::update/$1');
     $routes->post('siswa/hapus/(:num)', 'Siswa::hapus/$1');

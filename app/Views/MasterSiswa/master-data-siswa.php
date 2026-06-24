@@ -70,6 +70,9 @@
                     </td>
                     <td><span class="badge badge-aktif">Aktif</span></td>
                     <td>
+                            <a href="<?= base_url('siswa/show/' . $s['id_siswa']) ?>" class="btn btn-info btn-sm">
+                                <i class="ri-eye-line"></i> Show
+                            </a>
                         <a href="<?= base_url('siswa/edit/' . $s['id_siswa']) ?>" class="btn btn-edit btn-sm">
                             <i class="ri-edit-line"></i>Edit
                         </a>

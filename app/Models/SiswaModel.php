@@ -56,4 +56,15 @@ class SiswaModel extends Model
             ->get()
             ->getResultArray();
     }
+
+    public function getDetail(int $id): ?array
+    {
+        return $this->db->table('tbl_siswa s')
+            ->select('s.*, k.nama_kelas, k.tingkat, j.nama_jurusan, j.kode_jurusan, g.nama_guru')
+            ->join('tbl_kelas k',   'k.id_kelas = s.id_kelas',       'left')
+            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan',   'left')
+            ->join('tbl_guru g',    'g.id_guru = k.id_wali_kelas',   'left')
+            ->where('s.id_siswa', $id)
+            ->get()->getRowArray() ?: null;
+    }
 }
