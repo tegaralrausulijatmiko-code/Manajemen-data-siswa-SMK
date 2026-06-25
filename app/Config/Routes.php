@@ -15,13 +15,26 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('/', 'Dashboard::index');
     $routes->get('dashboard', 'Dashboard::index');
 
-    // routes untuk jurusan
-    $routes->get ('jurusan', 'Jurusan::index');
-    $routes->get ('jurusan/tambah', 'Jurusan::tambah');
-    $routes->post('jurusan/simpan', 'Jurusan::simpan');
-    $routes->get ('jurusan/edit/(:num)', 'Jurusan::edit/$1');
-    $routes->post('jurusan/update/(:num)', 'Jurusan::update/$1');
-    $routes->post('jurusan/hapus/(:num)', 'Jurusan::hapus/$1');
+    $routes->group('', ['filter' => 'role:guru'], static function ($routes) {
+        $routes->get ('guru/absensi', 'Absensi::guruIndex');
+        $routes->get ('guru/absensi/jadwal/(:num)', 'Absensi::guruJadwal/$1');
+        $routes->post('guru/absensi/jadwal/(:num)/simpan', 'Absensi::guruSimpanJadwal/$1');
+        $routes->get ('guru/absensi/rekap', 'Absensi::guruRekap');
+    });
+
+    $routes->group('', ['filter' => 'role:bk'], static function ($routes) {
+        $routes->get('bk/rekap', 'Absensi::bkRekap');
+        $routes->get('bk/rekap/export', 'Absensi::bkExportRekap');
+    });
+
+    $routes->group('', ['filter' => 'role:admin'], static function ($routes) {
+        // routes untuk jurusan
+        $routes->get ('jurusan', 'Jurusan::index');
+        $routes->get ('jurusan/tambah', 'Jurusan::tambah');
+        $routes->post('jurusan/simpan', 'Jurusan::simpan');
+        $routes->get ('jurusan/edit/(:num)', 'Jurusan::edit/$1');
+        $routes->post('jurusan/update/(:num)', 'Jurusan::update/$1');
+        $routes->post('jurusan/hapus/(:num)', 'Jurusan::hapus/$1');
 
     // routes untuk kelas
     $routes->get ('kelas', 'Kelas::index');
@@ -55,6 +68,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->post('guru/simpan', 'Guru::simpan');
     $routes->get ('guru/edit/(:num)', 'Guru::edit/$1');
     $routes->post('guru/update/(:num)', 'Guru::update/$1');
+    $routes->post('guru/buat-user/(:num)', 'Guru::buatUser/$1');
     $routes->post('guru/hapus/(:num)', 'Guru::hapus/$1');
 
     // routes untuk jadwal
@@ -77,5 +91,6 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->post('absensi/simpan', 'Absensi::simpan');
     $routes->get ('absensi/edit/(:num)', 'Absensi::edit/$1');
     $routes->post('absensi/update/(:num)', 'Absensi::update/$1');
-    $routes->post('absensi/hapus/(:num)', 'Absensi::hapus/$1');
+        $routes->post('absensi/hapus/(:num)', 'Absensi::hapus/$1');
+    });
 });

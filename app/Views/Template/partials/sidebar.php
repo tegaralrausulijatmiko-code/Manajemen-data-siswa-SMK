@@ -10,6 +10,26 @@
                 <i class="ri-dashboard-line"></i> Dashboard
             </a>
         </li>
+        <?php if (session()->get('role') === 'bk'): ?>
+        <li class="nav-item">
+            <a href="<?= base_url('bk/rekap') ?>" class="nav-link">
+                <i class="ri-file-chart-line"></i> Rekap Absensi
+            </a>
+        </li>
+        <?php endif; ?>
+        <?php if (session()->get('role') === 'guru'): ?>
+        <li class="nav-item">
+            <a href="<?= base_url('guru/absensi') ?>" class="nav-link">
+                <i class="ri-calendar-check-line"></i> Absensi Kelas
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="<?= base_url('guru/absensi/rekap') ?>" class="nav-link">
+                <i class="ri-file-chart-line"></i> Rekap Absensi
+            </a>
+        </li>
+        <?php endif; ?>
+        <?php if (session()->get('role') === 'admin'): ?>
         <li class="nav-item">
             <a href="<?= base_url('jurusan') ?>" class="nav-link">
                 <i class="ri-book-open-line"></i> Jurusan
@@ -50,6 +70,7 @@
                 <i class="ri-file-chart-line"></i> Rekap Absensi
             </a>
         </li>
+        <?php endif; ?>
     </ul>
     <div class="sidebar-footer">
         <ul>

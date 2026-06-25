@@ -110,6 +110,10 @@ class AbsensiModel extends Model
             $builder->where('a.id_jadwal', $filters['id_jadwal']);
         }
 
+        if (! empty($filters['id_guru'])) {
+            $builder->where('jd.id_guru', $filters['id_guru']);
+        }
+
         if (! empty($filters['status'])) {
             $builder->where('a.status', $filters['status']);
         }

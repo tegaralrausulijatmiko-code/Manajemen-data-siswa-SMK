@@ -44,12 +44,14 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('error', 'Username atau password salah.');
         }
 
+        $role = strtolower((string) $user['role']);
+
         session()->set([
             'is_logged_in' => true,
             'id_user'      => $user['id_user'],
             'nama'         => $user['nama'],
             'username'     => $user['username'],
-            'role'         => $user['role'],
+            'role'         => $role,
             'id_guru'      => $user['id_guru'],
             'id_siswa'     => $user['id_siswa'],
         ]);

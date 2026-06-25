@@ -29,7 +29,7 @@
                     <th>Nama Guru</th>
                     <th>Jenis Kelamin</th>
                     <th>No. HP</th>
-                    <th width="150">Aksi</th>
+                    <th width="250">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +56,12 @@
                         <a href="<?= base_url('guru/edit/' . $g['id_guru']) ?>" class="btn btn-edit btn-sm">
                             <i class="ri-edit-line"></i> Edit
                         </a>
+                        <form method="post" action="<?= base_url('guru/buat-user/' . $g['id_guru']) ?>" style="display:inline;">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="ri-user-add-line"></i> Buat User
+                            </button>
+                        </form>
                         <button onclick="confirmDelete('<?= base_url('guru/hapus/' . $g['id_guru']) ?>')" class="btn btn-danger btn-sm">
                             <i class="ri-delete-bin-line"></i>Hapus
                         </button>

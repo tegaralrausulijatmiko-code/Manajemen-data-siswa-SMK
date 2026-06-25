@@ -1,0 +1,149 @@
+<?php ob_start(); ?>
+
+<?php
+$monthNames = [
+    1 => 'Januari',
+    2 => 'Februari',
+    3 => 'Maret',
+    4 => 'April',
+    5 => 'Mei',
+    6 => 'Juni',
+    7 => 'Juli',
+    8 => 'Agustus',
+    9 => 'September',
+    10 => 'Oktober',
+    11 => 'November',
+    12 => 'Desember',
+];
+
+$exportQuery = http_build_query(array_filter([
+    'kelas'  => $filters['id_kelas'] ?? null,
+    'bulan'  => $filters['bulan'] ?? null,
+    'tahun'  => $filters['tahun'] ?? null,
+    'status' => $filters['status'] ?? null,
+], static fn ($value) => $value !== null && $value !== ''));
+?>
+
+<div class="page-header">
+    <div>
+        <h3>Rekap Absensi</h3>
+        <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Rekap Absensi BK</div>
+    </div>
+    <a href="<?= base_url('bk/rekap/export' . ($exportQuery ? '?' . $exportQuery : '')) ?>" class="btn btn-primary btn-sm">
+        <i class="ri-file-excel-2-line"></i> Export Excel
+    </a>
+</div>
+
+<div class="stats-grid">
+    <?php foreach (['Total' => 'ri-file-list-3-line', 'Hadir' => 'ri-checkbox-circle-line', 'Izin' => 'ri-mail-check-line', 'Sakit' => 'ri-first-aid-kit-line', 'Alpha' => 'ri-close-circle-line', 'Terlambat' => 'ri-time-line'] as $label => $icon): ?>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="<?= esc($icon) ?>"></i></div>
+            <div class="stat-text">
+                <p><?= esc($label) ?></p>
+                <h4><?= esc($summary[$label] ?? 0) ?></h4>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Filter Rekap</div>
+    </div>
+    <form method="get" style="padding:20px;">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Kelas</label>
+                <select name="kelas" class="form-control">
+                    <option value="">Semua Kelas</option>
+                    <?php foreach ($kelas_list as $kelas): ?>
+                        <option value="<?= $kelas['id_kelas'] ?>" <?= ($filters['id_kelas'] ?? '') == $kelas['id_kelas'] ? 'selected' : '' ?>>
+                            <?= esc($kelas['nama_kelas']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Status Absen</label>
+                <select name="status" class="form-control">
+                    <option value="">Semua Status</option>
+                    <?php foreach ($status_list as $status): ?>
+                        <option value="<?= esc($status) ?>" <?= ($filters['status'] ?? '') === $status ? 'selected' : '' ?>><?= esc($status) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Bulan</label>
+                <select name="bulan" class="form-control">
+                    <?php foreach ($monthNames as $number => $name): ?>
+                        <option value="<?= $number ?>" <?= (int) ($filters['bulan'] ?? date('n')) === $number ? 'selected' : '' ?>><?= esc($name) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tahun</label>
+                <input type="number" name="tahun" class="form-control" min="2000" max="2100" value="<?= esc($filters['tahun'] ?? date('Y')) ?>">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="ri-filter-line"></i> Terapkan</button>
+            <a href="<?= base_url('bk/rekap') ?>" class="btn btn-secondary btn-sm"><i class="ri-refresh-line"></i> Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Data Absensi <?= esc($monthNames[(int) ($filters['bulan'] ?? date('n'))]) ?> <?= esc($filters['tahun'] ?? date('Y')) ?></div>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>NISN</th>
+                    <th>Nama Siswa</th>
+                    <th>Kelas</th>
+                    <th>Jadwal</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Guru</th>
+                    <th>Status</th>
+                    <th>Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($rekap)): ?>
+                    <tr><td colspan="10"><div class="empty-state"><i class="ri-file-search-line"></i><p>Tidak ada data absensi</p></div></td></tr>
+                <?php else: ?>
+                    <?php foreach ($rekap as $i => $row): ?>
+                        <tr>
+                            <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 20) + $i + 1 ?></td>
+                            <td><?= esc(date('d/m/Y', strtotime($row['tanggal']))) ?></td>
+                            <td><?= esc($row['nisn'] ?? '-') ?></td>
+                            <td><strong><?= esc($row['nama_siswa'] ?? '-') ?></strong></td>
+                            <td><?= esc($row['nama_kelas'] ?? '-') ?></td>
+                            <td><?= esc(($row['hari'] ?? '-') . ', ' . substr($row['jam_mulai'] ?? '', 0, 5) . ' - ' . substr($row['jam_selesai'] ?? '', 0, 5)) ?></td>
+                            <td><?= esc($row['nama_mapel'] ?? '-') ?></td>
+                            <td><?= esc($row['nama_guru'] ?? '-') ?></td>
+                            <td><span class="badge <?= $row['status'] === 'Hadir' ? 'badge-aktif' : 'badge-warning' ?>"><?= esc($row['status']) ?></span></td>
+                            <td><?= esc($row['keterangan'] ?: '-') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    <?= view('Template/partials/pagination', ['pagination' => $pagination ?? null]) ?>
+</div>
+
+<?php
+$content = ob_get_clean();
+echo view('Template/layout', [
+    'title' => 'Rekap Absensi BK',
+    'subtitle' => 'Laporan absensi siswa',
+    'content' => $content,
+]);
+?>

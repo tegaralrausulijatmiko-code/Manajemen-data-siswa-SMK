@@ -3,14 +3,17 @@
 namespace App\Controllers;
 
 use App\Models\GuruModel;
+use App\Models\UserModel;
 
 class Guru extends BaseController
 {
     protected GuruModel $model;
+    protected UserModel $userModel;
 
     public function __construct()
     {
         $this->model = new GuruModel();
+        $this->userModel = new UserModel();
     }
 
     public function index()
@@ -90,6 +93,44 @@ class Guru extends BaseController
         ]);
 
         return redirect()->to(base_url('guru'))->with('success', 'Data guru berhasil diperbarui.');
+    }
+
+    public function buatUser($id)
+    {
+        $guru = $this->model->find($id);
+        if (! $guru) {
+            return redirect()->to(base_url('guru'))->with('error', 'Data guru tidak ditemukan.');
+        }
+
+        $nip = trim((string) ($guru['nip'] ?? ''));
+        if ($nip === '') {
+            return redirect()->to(base_url('guru'))->with('error', 'NIP guru belum tersedia.');
+        }
+
+        $existingUsername = $this->userModel->where('username', $nip)->first();
+        if ($existingUsername && (int) ($existingUsername['id_guru'] ?? 0) !== (int) $id) {
+            return redirect()->to(base_url('guru'))->with('error', 'NIP sudah dipakai sebagai username akun lain.');
+        }
+
+        $payload = [
+            'nama'     => $guru['nama_guru'],
+            'username' => $nip,
+            'password' => password_hash($nip, PASSWORD_DEFAULT),
+            'role'     => 'guru',
+            'status'   => 'aktif',
+            'id_guru'  => $id,
+            'id_siswa' => null,
+        ];
+
+        $existingGuruUser = $this->userModel->where('id_guru', $id)->where('role', 'guru')->first();
+        if ($existingGuruUser) {
+            $this->userModel->update($existingGuruUser['id_user'], $payload);
+        } else {
+            $this->userModel->insert($payload);
+        }
+
+        return redirect()->to(base_url('guru'))
+            ->with('success', 'Akun guru berhasil dibuat. Username dan password menggunakan NIP: ' . $nip);
     }
 
     public function hapus($id)

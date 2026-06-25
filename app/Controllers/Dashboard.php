@@ -15,6 +15,14 @@ class Dashboard extends BaseController
 {
     public function index()
     {
+        if (session()->get('role') === 'guru') {
+            return redirect()->to(base_url('guru/absensi'));
+        }
+
+        if (session()->get('role') === 'bk') {
+            return redirect()->to(base_url('bk/rekap'));
+        }
+
         $guruModel   = new GuruModel();
         $jurusanModel = new JurusanModel();
         $kelasModel  = new KelasModel();

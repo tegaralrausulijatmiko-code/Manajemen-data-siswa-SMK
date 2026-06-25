@@ -18,7 +18,7 @@ class JadwalModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    public function getAll(?string $keyword = null, ?string $id_kelas = null): array
+    public function getAll(?string $keyword = null, ?string $id_kelas = null, ?string $id_guru = null): array
     {
         $builder = $this->db->table('tbl_jadwal jd')
             ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
@@ -39,11 +39,41 @@ class JadwalModel extends Model
             $builder->where('jd.id_kelas', $id_kelas);
         }
 
+        if ($id_guru) {
+            $builder->where('jd.id_guru', $id_guru);
+        }
+
         return $builder
             ->orderBy("FIELD(jd.hari, 'Senin','Selasa','Rabu','Kamis','Jumat','Sabtu')", '', false)
             ->orderBy('jd.jam_mulai', 'ASC')
             ->get()
             ->getResultArray();
+    }
+
+    public function getKelasByGuru(int $idGuru): array
+    {
+        return $this->db->table('tbl_jadwal jd')
+            ->select('k.id_kelas, k.nama_kelas, j.kode_jurusan, j.nama_jurusan')
+            ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
+            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan', 'left')
+            ->where('jd.id_guru', $idGuru)
+            ->groupBy('k.id_kelas, k.nama_kelas, j.kode_jurusan, j.nama_jurusan')
+            ->orderBy('k.nama_kelas')
+            ->get()
+            ->getResultArray();
+    }
+
+    public function getDetailForGuru(int $idJadwal, int $idGuru): ?array
+    {
+        return $this->db->table('tbl_jadwal jd')
+            ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
+            ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
+            ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
+            ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left')
+            ->where('jd.id_jadwal', $idJadwal)
+            ->where('jd.id_guru', $idGuru)
+            ->get()
+            ->getRowArray();
     }
 
     public function getDetail(int $id): ?array
