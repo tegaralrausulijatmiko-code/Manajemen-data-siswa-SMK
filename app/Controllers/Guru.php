@@ -102,11 +102,16 @@ class Guru extends BaseController
             return redirect()->to(base_url('guru'))->with('error', 'Data guru tidak ditemukan.');
         }
 
+        $user = trim((string) ($guru['nama_guru'] ?? ''));
+        if ($user === '') {
+            return redirect()->to(base_url('guru'))->with('error', 'Nama guru belum tersedia.');
+            }
+
         $nip = trim((string) ($guru['nip'] ?? ''));
         if ($nip === '') {
             return redirect()->to(base_url('guru'))->with('error', 'NIP guru belum tersedia.');
-        }
-
+            }
+        
         $existingUsername = $this->userModel->where('username', $nip)->first();
         if ($existingUsername && (int) ($existingUsername['id_guru'] ?? 0) !== (int) $id) {
             return redirect()->to(base_url('guru'))->with('error', 'NIP sudah dipakai sebagai username akun lain.');
@@ -130,7 +135,7 @@ class Guru extends BaseController
         }
 
         return redirect()->to(base_url('guru'))
-            ->with('success', 'Akun guru berhasil dibuat. Username dan password menggunakan NIP: ' . $nip);
+            ->with('success', 'Akun guru berhasil dibuat. Username menggunakan NAMA dan password menggunakan NIP: ' . $nip);
     }
 
     public function hapus($id)
