@@ -119,7 +119,7 @@ class Guru extends BaseController
 
         $payload = [
             'nama'     => $guru['nama_guru'],
-            'username' => $nip,
+            'username' => $user,
             'password' => password_hash($nip, PASSWORD_DEFAULT),
             'role'     => 'guru',
             'status'   => 'aktif',
