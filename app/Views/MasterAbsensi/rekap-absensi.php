@@ -81,15 +81,30 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Kelas</label>
-                <select name="kelas" class="form-control">
-                    <option value="">Semua Kelas</option>
-                    <?php foreach ($kelas_list as $k): ?>
-                        <option value="<?= $k['id_kelas'] ?>"
-                            <?= ($filters['id_kelas'] ?? '') == $k['id_kelas'] ? 'selected' : '' ?>>
-                            <?= esc($k['nama_kelas']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="kelas" id="kelas" class="form-control">
+                        <option value="">Semua Kelas</option>
+
+                        <?php
+                        $grouped = [];
+
+                        foreach ($kelas_list as $kelas) {
+                            $jurusan = $kelas['nama_jurusan'];
+                            $grouped[$jurusan][] = $kelas;
+                        }
+
+                        foreach ($grouped as $jurusan => $list):
+                        ?>
+                            <optgroup label="<?= esc($jurusan) ?>">
+                                <?php foreach ($list as $k): ?>
+                                    <option
+                                        value="<?= $k['id_kelas'] ?>"
+                                        <?= ($filters['id_kelas'] ?? '') == $k['id_kelas'] ? 'selected' : '' ?>>
+                                        <?= esc($k['nama_kelas']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                        <?php endforeach; ?>
+                    </select>
             </div>
         </div>
         <div class="form-row">
@@ -103,6 +118,7 @@
                             . ' (' . $jadwal['hari'] . ', ' . substr($jadwal['jam_mulai'], 0, 5) . ')';
                     ?>
                         <option value="<?= $jadwal['id_jadwal'] ?>"
+                            data-kelas="<?= $jadwal['id_kelas'] ?>"
                             <?= ($filters['id_jadwal'] ?? '') == $jadwal['id_jadwal'] ? 'selected' : '' ?>>
                             <?= esc($lbl) ?>
                         </option>
@@ -221,20 +237,85 @@ echo view('Template/layout', [
 ?>
 
 <script>
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#kelas', {
+        create: false,
+        maxOptions: 500,
+        placeholder: 'Pilih kelas...',
+        dropdownParent: 'body',
+    });
+
+});
+</script>
+
+<script>
+
 document.addEventListener('DOMContentLoaded', function () {
     const jenis = document.getElementById('jenis');
+    const kelas = document.getElementById('kelas');
     const jadwal = document.getElementById('jadwal');
 
+    const semuaOption = [...jadwal.options];
+
     function toggleJadwal() {
+        const firstOption = jadwal.options[0];
+
         if (jenis.value === 'harian') {
             jadwal.disabled = true;
             jadwal.value = '';
+            firstOption.text = '';
         } else {
             jadwal.disabled = false;
+            firstOption.text = 'Semua Jadwal';
         }
     }
 
-    toggleJadwal(); // saat halaman pertama kali dibuka
+    function filterJadwal() {
+        const idKelas = kelas.value;
+        const selected = jadwal.value;
+
+        jadwal.innerHTML = '';
+
+        let jumlah = 0;
+
+        semuaOption.forEach(option => {
+            if (
+                option.value === '' ||
+                idKelas === '' ||
+                option.dataset.kelas === idKelas
+            ) {
+                jadwal.appendChild(option);
+
+                if (option.value !== '') {
+                    jumlah++;
+                }
+            }
+        });
+
+        // Jika kelas dipilih tetapi tidak memiliki jadwal
+        if (idKelas !== '' && jumlah === 0) {
+            jadwal.innerHTML = '';
+            jadwal.appendChild(new Option('Tidak ada jadwal', ''));
+            jadwal.disabled = true;
+            return;
+        }
+
+        // Jika ada jadwal, aktifkan kembali
+        jadwal.disabled = (jenis.value === 'harian');
+
+        if ([...jadwal.options].some(o => o.value === selected)) {
+            jadwal.value = selected;
+        } else {
+            jadwal.value = '';
+        }
+    }
+
+    toggleJadwal();
+    filterJadwal();
+
     jenis.addEventListener('change', toggleJadwal);
+    kelas.addEventListener('change', filterJadwal);
 });
 </script>
