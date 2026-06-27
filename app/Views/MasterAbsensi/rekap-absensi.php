@@ -9,7 +9,7 @@
 </div>
 
 <div class="stats-grid">
-    <?php foreach (['Total' => 'ri-file-list-3-line', 'Hadir' => 'ri-checkbox-circle-line', 'Izin' => 'ri-mail-check-line', 'Sakit' => 'ri-first-aid-kit-line', 'Alpa' => 'ri-close-circle-line'] as $label => $icon): ?>
+    <?php foreach (['Total' => 'ri-file-list-3-line', 'Hadir' => 'ri-checkbox-circle-line', 'Izin' => 'ri-mail-check-line', 'Sakit' => 'ri-first-aid-kit-line', 'Alpha' => 'ri-close-circle-line'] as $label => $icon): ?>
         <div class="stat-card">
             <div class="stat-icon"><i class="<?= esc($icon) ?>"></i></div>
             <div class="stat-text">
@@ -105,7 +105,7 @@
                             <td><?= esc(($row['hari'] ?? '-') . ', ' . substr($row['jam_mulai'] ?? '', 0, 5) . ' - ' . substr($row['jam_selesai'] ?? '', 0, 5)) ?></td>
                             <td><?= esc($row['nama_mapel'] ?? '-') ?></td>
                             <td><?= esc($row['nama_guru'] ?? '-') ?></td>
-                            <td><span class="badge <?= $row['status'] === 'Hadir' ? 'badge-aktif' : ($row['status'] === 'Izin' ? 'badge-warning' : ($row['status'] === 'Alpa' ? 'btn-danger' : 'badge-nonaktif')) ?>"><?= esc($row['status']) ?></span></td>
+                            <td><span class="badge <?= $row['status'] === 'Hadir' ? 'badge-aktif' : ($row['status'] === 'Izin' ? 'badge-warning' : ($row['status'] === 'Alpha' ? 'btn-danger' : 'badge-nonaktif')) ?>"><?= esc($row['status']) ?></span></td>
                             <td><?= esc($row['keterangan'] ?: '-') ?></td>
                         </tr>
                     <?php endforeach; ?>

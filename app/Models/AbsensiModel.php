@@ -11,119 +11,247 @@ class AbsensiModel extends Model
     protected $returnType = 'array';
 
     protected $allowedFields = [
-        'id_siswa', 'id_kelas', 'id_jadwal', 'tanggal', 'status', 'keterangan',
+        'id_siswa',
+        'id_kelas',
+        'id_jadwal',
+        'jenis',
+        'tanggal',
+        'status',
+        'keterangan',
     ];
 
-    protected $useTimestamps = true;
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
+    // -------------------------------------------------------------------------
+    // Lookup helpers
+    // -------------------------------------------------------------------------
 
-    public function getAll(?string $keyword = null, ?string $tanggal = null, ?string $id_kelas = null): array
-    {
-        $builder = $this->db->table('tbl_absensi a')
-            ->select('a.*, s.nisn, s.nama_siswa, k.nama_kelas, jd.hari, jd.jam_mulai, jd.jam_selesai, m.nama_mapel, g.nama_guru')
-            ->join('tbl_siswa s', 's.id_siswa = a.id_siswa', 'left')
-            ->join('tbl_kelas k', 'k.id_kelas = a.id_kelas', 'left')
-            ->join('tbl_jadwal jd', 'jd.id_jadwal = a.id_jadwal', 'left')
-            ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
-            ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left');
-        if ($keyword) {
-            $builder->groupStart()
-                ->like('s.nama_siswa', $keyword)
-                ->orLike('s.nisn', $keyword)
-                ->orLike('k.nama_kelas', $keyword)
-            ->groupEnd();
-        }
-
-        if ($tanggal) {
-            $builder->where('a.tanggal', $tanggal);
-        }
-
-        if ($id_kelas) {
-            $builder->where('a.id_kelas', $id_kelas);
-        }
-
-        return $builder->orderBy('a.tanggal', 'DESC')->orderBy('s.nama_siswa')->get()->getResultArray();
-    }
-
-    public function getByDateAndKelas(string $tanggal, ?string $id_kelas = null): array
-    {
-        $builder = $this->db->table('tbl_absensi a')
-            ->select('a.*, s.id_siswa, s.nisn, s.nama_siswa, k.nama_kelas')
-            ->join('tbl_siswa s', 's.id_siswa = a.id_siswa', 'left')
-            ->join('tbl_kelas k', 'k.id_kelas = a.id_kelas', 'left')
-            ->where('a.tanggal', $tanggal);
-
-        if ($id_kelas) {
-            $builder->where('a.id_kelas', $id_kelas);
-        }
-
-        $rows = $builder->get()->getResultArray();
-        return array_column($rows, null, 'id_siswa');
-    }
-
-    public function getByJadwalDate(int $idJadwal, string $tanggal): array
-    {
-        $rows = $this->where('id_jadwal', $idJadwal)
-            ->where('tanggal', $tanggal)
-            ->findAll();
-
-        $mapped = [];
-        foreach ($rows as $row) {
-            $mapped[$row['id_siswa']] = $row;
-        }
-
-        return $mapped;
-    }
-
+    /**
+     * Cari satu record absensi berdasarkan siswa + jadwal + tanggal (untuk absen mapel).
+     */
     public function findByStudentScheduleDate(int $idSiswa, int $idJadwal, string $tanggal): ?array
     {
-        return $this->where('id_siswa', $idSiswa)
-            ->where('id_jadwal', $idJadwal)
-            ->where('tanggal', $tanggal)
-            ->first();
+        return $this->where([
+            'id_siswa'  => $idSiswa,
+            'id_jadwal' => $idJadwal,
+            'tanggal'   => $tanggal,
+        ])->first();
     }
 
-    public function getRekap(array $filters = []): array
+    /**
+     * Cari satu record absensi harian berdasarkan siswa + tanggal (tanpa jadwal).
+     */
+    public function findHarian(int $idSiswa, string $tanggal): ?array
     {
-        $builder = $this->db->table('tbl_absensi a')
-            ->select('a.*, s.nisn, s.nama_siswa, k.nama_kelas, jd.hari, jd.jam_mulai, jd.jam_selesai, m.nama_mapel, g.nama_guru')
-            ->join('tbl_siswa s', 's.id_siswa = a.id_siswa', 'left')
-            ->join('tbl_kelas k', 'k.id_kelas = a.id_kelas', 'left')
-            ->join('tbl_jadwal jd', 'jd.id_jadwal = a.id_jadwal', 'left')
-            ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
-            ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left');
+        return $this->where([
+            'id_siswa' => $idSiswa,
+            'jenis'    => 'harian',
+            'tanggal'  => $tanggal,
+        ])->first();
+    }
 
-        if (! empty($filters['tanggal_awal'])) {
-            $builder->where('a.tanggal >=', $filters['tanggal_awal']);
+    // -------------------------------------------------------------------------
+    // Fetch untuk form input
+    // -------------------------------------------------------------------------
+
+    /**
+     * Ambil map [id_siswa => absensi] berdasarkan jadwal + tanggal (absen mapel).
+     */
+    public function getByJadwalDate(int $idJadwal, string $tanggal): array
+    {
+        $rows = $this->where([
+            'id_jadwal' => $idJadwal,
+            'tanggal'   => $tanggal,
+        ])->findAll();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[$row['id_siswa']] = $row;
+        }
+        return $map;
+    }
+
+    /**
+     * Ambil map [id_siswa => absensi] harian berdasarkan kelas + tanggal.
+     */
+    public function getHarianByKelasDate(int $idKelas, string $tanggal): array
+    {
+        $rows = $this->where([
+            'id_kelas' => $idKelas,
+            'jenis'    => 'harian',
+            'tanggal'  => $tanggal,
+        ])->findAll();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[$row['id_siswa']] = $row;
+        }
+        return $map;
+    }
+
+    /**
+     * Ambil map [id_siswa => absensi] berdasarkan tanggal dan kelas (admin).
+     */
+    public function getByDateAndKelas(string $tanggal, ?string $idKelas = null): array
+    {
+        $builder = $this->where('tanggal', $tanggal);
+
+        if ($idKelas) {
+            $builder->where('id_kelas', $idKelas);
         }
 
-        if (! empty($filters['tanggal_akhir'])) {
-            $builder->where('a.tanggal <=', $filters['tanggal_akhir']);
+        $rows = $builder->findAll();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[$row['id_siswa']] = $row;
+        }
+        return $map;
+    }
+
+    // -------------------------------------------------------------------------
+    // Rekap / laporan
+    // -------------------------------------------------------------------------
+
+    /**
+     * Rekap absensi dengan join lengkap, support filter fleksibel.
+     *
+     * Filter keys: id_siswa, id_kelas, id_jadwal, id_guru, jenis,
+     *              status, tanggal_awal, tanggal_akhir, bulan, tahun
+     */
+    public function getRekap(array $filters = []): array
+    {
+        $db = db_connect();
+
+        $sql = "
+            SELECT
+                a.id_absensi,
+                a.tanggal,
+                a.status,
+                a.keterangan,
+                a.jenis,
+                s.id_siswa,
+                s.nisn,
+                s.nama_siswa,
+                k.id_kelas,
+                k.nama_kelas,
+                j.id_jadwal,
+                j.hari,
+                j.jam_mulai,
+                j.jam_selesai,
+                mp.nama_mapel,
+                g.nama_guru
+            FROM tbl_absensi a
+            LEFT JOIN tbl_siswa      s  ON s.id_siswa  = a.id_siswa
+            LEFT JOIN tbl_kelas      k  ON k.id_kelas  = a.id_kelas
+            LEFT JOIN tbl_jadwal     j  ON j.id_jadwal = a.id_jadwal
+            LEFT JOIN tbl_mata_pelajaran mp ON mp.id_mapel = j.id_mapel
+            LEFT JOIN tbl_guru       g  ON g.id_guru   = COALESCE(j.id_guru, k.id_wali_kelas)
+            WHERE 1=1
+        ";
+
+        $params = [];
+
+        if (! empty($filters['id_siswa'])) {
+            $sql     .= ' AND a.id_siswa = ?';
+            $params[] = $filters['id_siswa'];
         }
 
         if (! empty($filters['id_kelas'])) {
-            $builder->where('a.id_kelas', $filters['id_kelas']);
+            $sql     .= ' AND a.id_kelas = ?';
+            $params[] = $filters['id_kelas'];
         }
 
         if (! empty($filters['id_jadwal'])) {
-            $builder->where('a.id_jadwal', $filters['id_jadwal']);
+            $sql     .= ' AND a.id_jadwal = ?';
+            $params[] = $filters['id_jadwal'];
         }
 
         if (! empty($filters['id_guru'])) {
-            $builder->where('jd.id_guru', $filters['id_guru']);
+            $sql     .= ' AND (j.id_guru = ? OR k.id_wali_kelas = ?)';
+            $params[] = $filters['id_guru'];
+            $params[] = $filters['id_guru'];
+        }
+
+        if (! empty($filters['jenis'])) {
+            $sql     .= ' AND a.jenis = ?';
+            $params[] = $filters['jenis'];
         }
 
         if (! empty($filters['status'])) {
-            $builder->where('a.status', $filters['status']);
+            $sql     .= ' AND a.status = ?';
+            $params[] = $filters['status'];
         }
 
-        return $builder
-            ->orderBy('a.tanggal', 'DESC')
-            ->orderBy("FIELD(jd.hari, 'Senin','Selasa','Rabu','Kamis','Jumat','Sabtu')", '', false)
-            ->orderBy('jd.jam_mulai', 'ASC')
-            ->orderBy('s.nama_siswa', 'ASC')
-            ->get()
-            ->getResultArray();
+        if (! empty($filters['tanggal_awal'])) {
+            $sql     .= ' AND a.tanggal >= ?';
+            $params[] = $filters['tanggal_awal'];
+        }
+
+        if (! empty($filters['tanggal_akhir'])) {
+            $sql     .= ' AND a.tanggal <= ?';
+            $params[] = $filters['tanggal_akhir'];
+        }
+
+        $sql .= ' ORDER BY a.tanggal DESC, k.nama_kelas, s.nama_siswa';
+
+        $query = $db->query($sql, $params);
+        return $query ? $query->getResultArray() : [];
+    }
+
+    /**
+     * Rekap bulanan per siswa (untuk BK / wali kelas).
+     */
+    public function rekapBulanan(int $idKelas, int $bulan, int $tahun, string $jenis = 'harian'): array
+    {
+        $db    = db_connect();
+        $start = sprintf('%04d-%02d-01', $tahun, $bulan);
+        $end   = date('Y-m-t', strtotime($start));
+
+        $sql = "
+            SELECT
+                s.id_siswa,
+                s.nisn,
+                s.nama_siswa,
+                SUM(a.status = 'Hadir') AS hadir,
+                SUM(a.status = 'Izin')  AS izin,
+                SUM(a.status = 'Sakit') AS sakit,
+                SUM(a.status = 'Alpha')  AS Alpha,
+                COUNT(a.id_absensi)     AS total
+            FROM tbl_siswa s
+            LEFT JOIN tbl_absensi a
+                ON  a.id_siswa = s.id_siswa
+                AND a.id_kelas = ?
+                AND a.jenis    = ?
+                AND a.tanggal BETWEEN ? AND ?
+            WHERE s.id_kelas = ?
+            GROUP BY s.id_siswa, s.nisn, s.nama_siswa
+            ORDER BY s.nama_siswa
+        ";
+
+        $query = $db->query($sql, [$idKelas, $jenis, $start, $end, $idKelas]);
+        return $query ? $query->getResultArray() : [];
+    }
+
+    /**
+     * Data untuk export per pertemuan (jadwal mapel).
+     */
+    public function dataExportPertemuan(int $idJadwal, string $tanggalAwal, string $tanggalAkhir): array
+    {
+        $db  = db_connect();
+        $sql = "
+            SELECT
+                a.tanggal,
+                a.status,
+                a.keterangan,
+                s.nisn,
+                s.nama_siswa
+            FROM tbl_absensi a
+            JOIN tbl_siswa s ON s.id_siswa = a.id_siswa
+            WHERE a.id_jadwal = ?
+              AND a.tanggal BETWEEN ? AND ?
+            ORDER BY a.tanggal, s.nama_siswa
+        ";
+
+        $query = $db->query($sql, [$idJadwal, $tanggalAwal, $tanggalAkhir]);
+        return $query ? $query->getResultArray() : [];
     }
 }

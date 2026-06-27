@@ -50,15 +50,16 @@
             </a>
         </li>
 
+        
+        <!-- PRESENSI -->
+        <li class="nav-title">PRESENSI</li>
+        
         <li class="nav-item">
             <a href="<?= base_url('jadwal') ?>" class="nav-link">
                 <i class="ri-calendar-2-line"></i> Jadwal
             </a>
         </li>
-
-        <!-- PRESENSI -->
-        <li class="nav-title">PRESENSI</li>
-
+        
         <li class="nav-item">
             <a href="<?= base_url('absensi') ?>" class="nav-link">
                 <i class="ri-calendar-check-line"></i> Absensi

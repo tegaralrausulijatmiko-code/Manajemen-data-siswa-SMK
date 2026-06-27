@@ -108,4 +108,16 @@ class KelasModel extends Model
 
         return $kelas;
     }
+
+    public function getKelasWaliByGuru(int $idGuru): array
+    {
+        return $this->db->table('tbl_kelas k')
+            ->select('k.id_kelas, k.nama_kelas, k.tingkat, j.nama_jurusan, j.kode_jurusan')
+            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan', 'left')
+            ->where('k.id_wali_kelas', $idGuru)   
+            ->orderBy('k.tingkat', 'ASC')
+            ->orderBy('k.nama_kelas', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
 }
