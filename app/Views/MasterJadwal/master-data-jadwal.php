@@ -12,16 +12,16 @@
     <div class="card-header">
         <div class="card-title">Daftar Jadwal</div>
         <form method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <select name="kelas" class="form-control" style="width:170px; padding:8px 10px;" onchange="this.form.submit()">
+            <select name="kelas" id="kelas" class="form-control" style="width:170px; padding:8px 10px;" onchange="this.form.submit()">
                 <option value="">Semua Kelas</option>
                 <?php foreach ($kelas_list as $k): ?>
                     <option value="<?= $k['id_kelas'] ?>" <?= ($filter_kelas ?? '') == $k['id_kelas'] ? 'selected' : '' ?>><?= esc($k['nama_kelas']) ?></option>
                 <?php endforeach; ?>
             </select>
-            <div class="search-box">
+            <!-- <div class="search-box">
                 <i class="ri-search-line"></i>
                 <input type="text" name="q" placeholder="Cari jadwal..." value="<?= esc($keyword ?? '') ?>">
-            </div>
+            </div> -->
         </form>
     </div>
     <div class="table-responsive">
@@ -71,3 +71,15 @@ echo view('Template/layout', [
     'content' => $content,
 ]);
 ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#kelas', {
+        create: false,
+        maxOptions: 500,
+        placeholder: 'Pilih kelas...',
+        dropdownParent: 'body',
+    });
+
+});
+</script>

@@ -22,7 +22,7 @@
             </div>
             <div>
                 <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:4px;">Kelas</label>
-                <select name="kelas" class="form-control" style="width:180px;">
+                <select name="kelas" id="kelas" class="form-control" style="width:180px;">
                     <option value="">Semua Kelas</option>
                     <?php foreach ($kelas_list as $k): ?>
                         <option value="<?= $k['id_kelas'] ?>" <?= $filter_kelas == $k['id_kelas'] ? 'selected' : '' ?>>
@@ -33,7 +33,7 @@
             </div>
             <div>
                 <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:4px;">Guru</label>
-                <select name="guru" class="form-control" style="width:200px;">
+                <select name="guru" id="guru" class="form-control" style="width:200px;">
                     <option value="">Semua Guru</option>
                     <?php foreach ($guru_list as $g): ?>
                         <option value="<?= $g['id_guru'] ?>" <?= $filter_guru == $g['id_guru'] ? 'selected' : '' ?>>
@@ -119,3 +119,21 @@ echo view('Template/layout', [
     'content'  => $content,
 ]);
 ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#kelas', {
+        create: false,
+        maxOptions: 500,
+        placeholder: 'Pilih kelas...',
+        dropdownParent: 'body',
+    });
+
+    new TomSelect('#guru', {
+        create: false,
+        maxOptions: 500,
+        placeholder: 'Pilih guru...',
+        dropdownParent: 'body',
+    });
+});
+</script>
