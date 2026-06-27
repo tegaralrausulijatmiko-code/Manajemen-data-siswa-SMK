@@ -103,7 +103,6 @@
                                                 'Izin'      => ['border'=>'#fcd34d','active_bg'=>'#d97706','color'=>'#92400e'],
                                                 'Sakit'     => ['border'=>'#93c5fd','active_bg'=>'#2563eb','color'=>'#1e40af'],
                                                 'Alpha'     => ['border'=>'#fca5a5','active_bg'=>'#dc2626','color'=>'#991b1b'],
-                                                'Terlambat' => ['border'=>'#c4b5fd','active_bg'=>'#7c3aed','color'=>'#4c1d95'],
                                             ];
                                             $c = $colorMap[$status] ?? $colorMap['Hadir'];
                                             $isActive = $current === $status;

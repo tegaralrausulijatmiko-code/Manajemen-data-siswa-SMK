@@ -43,13 +43,13 @@
             <p>Jadwal Pelajaran</p>
         </div>
     </div>
-    <div class="stat-card" onclick="location.href='<?= base_url('absensi') ?>'" style="cursor:pointer;">
+    <!-- <div class="stat-card" onclick="location.href='<?= base_url('absensi') ?>'" style="cursor:pointer;">
         <div class="stat-icon" style="background:#f3e8ff; color:#7e22ce;"><i class="ri-checkbox-circle-line"></i></div>
         <div class="stat-text">
             <h4><?= $stats['absensi'] ?></h4>
             <p>Data Absensi</p>
         </div>
-    </div>
+    </div> -->
 </div>
 
 

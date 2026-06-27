@@ -35,7 +35,7 @@ $exportQuery = http_build_query(array_filter([
 </div>
 
 <div class="stats-grid">
-    <?php foreach (['Total' => 'ri-file-list-3-line', 'Hadir' => 'ri-checkbox-circle-line', 'Izin' => 'ri-mail-check-line', 'Sakit' => 'ri-first-aid-kit-line', 'Alpha' => 'ri-close-circle-line', 'Terlambat' => 'ri-time-line'] as $label => $icon): ?>
+    <?php foreach (['Total' => 'ri-file-list-3-line', 'Hadir' => 'ri-checkbox-circle-line', 'Izin' => 'ri-mail-check-line', 'Sakit' => 'ri-first-aid-kit-line', 'Alpha' => 'ri-close-circle-line'] as $label => $icon): ?>
         <div class="stat-card">
             <div class="stat-icon"><i class="<?= esc($icon) ?>"></i></div>
             <div class="stat-text">

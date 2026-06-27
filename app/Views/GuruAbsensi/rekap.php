@@ -29,7 +29,6 @@
         'Izin'      => ['icon' => 'ri-mail-check-line',      'color' => '#d97706'],
         'Sakit'     => ['icon' => 'ri-heart-pulse-line',     'color' => '#2563eb'],
         'Alpha'      => ['icon' => 'ri-close-circle-line',    'color' => '#dc2626'],
-        'Terlambat' => ['icon' => 'ri-time-line',            'color' => '#7c3aed'],
     ];
     foreach ($statCards as $label => $cfg):
     ?>
@@ -161,7 +160,6 @@
                             'Izin'      => 'badge-warning',
                             'Sakit'     => 'badge-info',
                             'Alpha'      => 'badge-nonaktif',
-                            'Terlambat' => 'badge-terlambat',
                             default     => 'badge-light',
                         };
 
@@ -210,7 +208,6 @@ $extra_css = <<<CSS
 <style>
 /* Badge tambahan */
 .badge-info      { background:#eff6ff; color:#1d4ed8; }
-.badge-terlambat { background:#f5f3ff; color:#6d28d9; }
 .badge-light     { background:#f3f4f6; color:#6b7280; }
 </style>
 CSS;

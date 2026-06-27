@@ -541,7 +541,7 @@ class Absensi extends BaseController
     /** Status lengkap untuk absen mapel */
     private function statusList(): array
     {
-        return ['Hadir', 'Izin', 'Sakit', 'Alpha', 'Terlambat'];
+        return ['Hadir', 'Izin', 'Sakit', 'Alpha'];
     }
 
     /** Status untuk absen harian wali kelas */

@@ -99,11 +99,11 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a href="<?= base_url('guru/absensi/rekap') ?>" class="nav-link">
                 <i class="ri-file-chart-line"></i> Rekap Absensi
             </a>
-        </li>
+        </li> -->
 
         <?php endif; ?>
 

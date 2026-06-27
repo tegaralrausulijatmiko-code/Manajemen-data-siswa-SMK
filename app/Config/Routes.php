@@ -27,7 +27,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->post('guru/absensi/harian/simpan', 'Absensi::guruSimpanHarian');
         $routes->post('guru/absensi/harian/(:num)/simpan', 'Absensi::guruSimpanHarian/$1');
 
-        $routes->get('guru/absensi/rekap', 'Absensi::guruRekap');
+        // $routes->get('guru/absensi/rekap', 'Absensi::guruRekap');
     });
 
     $routes->group('', ['filter' => 'role:bk'], static function ($routes) {
