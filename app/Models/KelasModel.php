@@ -43,7 +43,7 @@ class KelasModel extends Model
     public function getKelasWithJurusan(): array
     {
         return $this->db->table('tbl_kelas k')
-            ->select('k.id_kelas, k.nama_kelas, j.nama_jurusan')
+            ->select('k.id_kelas, k.nama_kelas, k.tingkat, j.kode_jurusan, j.nama_jurusan')
             ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan', 'left')
             ->orderBy('k.tingkat')->orderBy('k.nama_kelas')
             ->get()->getResultArray();

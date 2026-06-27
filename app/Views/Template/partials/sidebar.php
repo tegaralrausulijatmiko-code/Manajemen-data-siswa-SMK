@@ -56,13 +56,13 @@
         
         <li class="nav-item">
             <a href="<?= base_url('jadwal') ?>" class="nav-link">
-                <i class="ri-calendar-2-line"></i> Jadwal
+                <i class="ri-calendar-2-line"></i> Absensi Mapel
             </a>
         </li>
         
         <li class="nav-item">
             <a href="<?= base_url('absensi') ?>" class="nav-link">
-                <i class="ri-calendar-check-line"></i> Absensi
+                <i class="ri-calendar-check-line"></i> Absensi Harian
             </a>
         </li>
 

@@ -44,7 +44,6 @@
                 <div class="form-group"><label class="form-label">Jam Mulai <span class="required">*</span></label><input type="time" name="jam_mulai" class="form-control" value="<?= esc(substr($jadwal['jam_mulai'], 0, 5)) ?>" required></div>
                 <div class="form-group"><label class="form-label">Jam Selesai <span class="required">*</span></label><input type="time" name="jam_selesai" class="form-control" value="<?= esc(substr($jadwal['jam_selesai'], 0, 5)) ?>" required></div>
             </div>
-            <div class="form-group"><label class="form-label">Ruang</label><input type="text" name="ruang" class="form-control" value="<?= esc($jadwal['ruang'] ?? '') ?>" maxlength="50"></div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary"><i class="ri-save-line"></i> Update</button>
                 <a href="<?= base_url('jadwal') ?>" class="btn btn-secondary">Batal</a>
