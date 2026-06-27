@@ -15,25 +15,24 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('/', 'Dashboard::index');
     $routes->get('dashboard', 'Dashboard::index');
 
-    $routes->group('guru', ['filter' => 'role:guru'], static function ($routes) {
-        // Dashboard absensi guru (pilih: mapel atau harian)
-        $routes->get('absensi', 'Absensi::guruIndex');
-    
-        // Absen Mapel — berdasarkan jadwal mengajar
-        $routes->get('absensi/jadwal/(:num)', 'Absensi::guruJadwal/$1');
-        $routes->post('absensi/jadwal/(:num)/simpan', 'Absensi::guruSimpanJadwal/$1');
-    
-        // Absen Harian — wali kelas
-        $routes->get('absensi/harian/(:num)', 'Absensi::guruHarian/$1');
-        $routes->post('absensi/harian/(:num)/simpan', 'Absensi::guruSimpanHarian/$1');
-    
-        // Rekap absensi guru
-        $routes->get('absensi/rekap', 'Absensi::guruRekap');
+    $routes->group('', ['filter' => 'role:guru'], static function ($routes) {
+        // Guru — Absen Mapel
+        $routes->get('guru/absensi', 'Absensi::guruIndex');
+        $routes->get('guru/absensi/jadwal/(:num)', 'Absensi::guruJadwal/$1');
+        $routes->post('guru/absensi/jadwal/(:num)/simpan','Absensi::guruSimpanJadwal/$1');
+
+        // Guru — Absen Harian (Wali Kelas)
+        $routes->get('guru/absensi/harian', 'Absensi::guruHarian');
+        $routes->get('guru/absensi/harian/(:num)', 'Absensi::guruHarian/$1');
+        $routes->post('guru/absensi/harian/simpan', 'Absensi::guruSimpanHarian');
+        $routes->post('guru/absensi/harian/(:num)/simpan', 'Absensi::guruSimpanHarian/$1');
+
+        $routes->get('guru/absensi/rekap', 'Absensi::guruRekap');
     });
 
     $routes->group('', ['filter' => 'role:bk'], static function ($routes) {
-        $routes->get('bk/rekap', 'Absensi::bkRekap');
-        $routes->get('bk/rekap/export', 'Absensi::bkExportRekap');
+        $routes->get('bk/absensi/rekap', 'Absensi::rekap');
+        $routes->get('/absensi/rekap/export', 'Absensi::exportRekap');
     });
 
     $routes->group('', ['filter' => 'role:admin'], static function ($routes) {
@@ -95,29 +94,15 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->get('admin/absensi/harian/(:num)', 'Absensi::formHarian/$1');
         $routes->post('admin/absensi/harian/(:num)/simpan', 'Absensi::simpanHarian/$1');
         $routes->get('admin/absensi/rekap', 'Absensi::rekap');
-        $routes->get('admin/absensi/rekap/export', 'Absensi::exportRekap');
+        $routes->get('absensi/rekap/export', 'Absensi::exportRekap');
 
+        $routes->get('user', 'User::index');
+        $routes->get('user/tambah', 'User::tambah');
+        $routes->post('user/simpan', 'User::simpan');
+        $routes->get('user/edit/(:num)', 'User::edit/$1');
+        $routes->post('user/update/(:num)', 'User::update/$1');
+        $routes->post('user/toggle-status/(:num)', 'User::toggleStatus/$1');
+        $routes->post('user/reset-password/(:num)','User::resetPassword/$1');
+        $routes->post('user/hapus/(:num)', 'User::hapus/$1');
     });
-
-    $routes->get('user', 'User::index');
-    $routes->get('user/tambah', 'User::tambah');
-    $routes->post('user/simpan', 'User::simpan');
-    $routes->get('user/edit/(:num)', 'User::edit/$1');
-    $routes->post('user/update/(:num)', 'User::update/$1');
-    $routes->post('user/toggle-status/(:num)', 'User::toggleStatus/$1');
-    $routes->post('user/reset-password/(:num)','User::resetPassword/$1');
-    $routes->post('user/hapus/(:num)', 'User::hapus/$1');
-
-    // Guru — Absen Mapel
-    $routes->get('guru/absensi', 'Absensi::guruIndex');
-    $routes->get('guru/absensi/jadwal/(:num)', 'Absensi::guruJadwal/$1');
-    $routes->post('guru/absensi/jadwal/(:num)/simpan','Absensi::guruSimpanJadwal/$1');
-
-    // Guru — Absen Harian (Wali Kelas)
-    $routes->get('guru/absensi/harian', 'Absensi::guruHarian');
-    $routes->get('guru/absensi/harian/(:num)', 'Absensi::guruHarian/$1');
-    $routes->post('guru/absensi/harian/simpan', 'Absensi::guruSimpanHarian');
-    $routes->post('guru/absensi/harian/(:num)/simpan', 'Absensi::guruSimpanHarian/$1');
-
-    $routes->get('guru/absensi/rekap', 'Absensi::guruRekap');
 });

@@ -34,7 +34,6 @@
                     <th>Kelas</th>
                     <th>Mata Pelajaran</th>
                     <th>Guru</th>
-                    <th>Ruang</th>
                     <th width="230">Aksi</th>
                 </tr>
             </thead>
@@ -50,9 +49,8 @@
                             <td><?= esc($j['nama_kelas'] ?? '-') ?></td>
                             <td><strong><?= esc($j['nama_mapel'] ?? '-') ?></strong></td>
                             <td><?= esc($j['nama_guru'] ?? '-') ?></td>
-                            <td><?= esc($j['ruang'] ?? '-') ?></td>
                             <td>
-                                <a href="<?= base_url('absensi/jadwal/' . $j['id_jadwal']) ?>" class="btn btn-primary btn-sm"><i class="ri-calendar-check-line"></i>Absen</a>
+                                <!-- <a href="<?= base_url('absensi/jadwal/' . $j['id_jadwal']) ?>" class="btn btn-primary btn-sm"><i class="ri-calendar-check-line"></i>Absen</a> -->
                                 <a href="<?= base_url('jadwal/edit/' . $j['id_jadwal']) ?>" class="btn btn-edit btn-sm"><i class="ri-edit-line"></i>Edit</a>
                                 <button onclick="confirmDelete('<?= base_url('jadwal/hapus/' . $j['id_jadwal']) ?>')" class="btn btn-danger btn-sm"><i class="ri-delete-bin-line"></i>Hapus</button>
                             </td>

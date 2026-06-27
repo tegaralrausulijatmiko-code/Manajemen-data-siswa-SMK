@@ -73,7 +73,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="<?= base_url('absensi/rekap') ?>" class="nav-link">
+            <a href="<?= base_url('admin/absensi/rekap') ?>" class="nav-link">
                 <i class="ri-file-chart-line"></i> Rekap Absensi
             </a>
         </li>
@@ -112,7 +112,7 @@
         <li class="nav-title">PRESENSI</li>
 
         <li class="nav-item">
-            <a href="<?= base_url('bk/rekap') ?>" class="nav-link">
+            <a href="<?= base_url('bk/absensi/rekap') ?>" class="nav-link">
                 <i class="ri-file-chart-line"></i> Rekap Absensi
             </a>
         </li>

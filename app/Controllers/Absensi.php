@@ -134,46 +134,7 @@ class Absensi extends BaseController
             ->with('success', 'Absensi jadwal berhasil disimpan.');
     }
 
-    // =========================================================================
-    // ADMIN — Rekap
-    // =========================================================================
-
-    public function rekap()
-    {
-        $filters = $this->rekapFilters();
-        $rows    = $this->model->getRekap($filters);
-        $paged   = $this->paginateArray($rows, 20);
-
-        return view('MasterAbsensi/rekap-absensi', [
-            'rekap'       => $paged['items'],
-            'kelas_list'  => $this->kelasModel->getKelasWithJurusan(),
-            'jadwal_list' => $this->jadwalModel->getAll(),
-            'status_list' => $this->statusList(),
-            'filters'     => $filters,
-            'summary'     => $this->summarizeStatus($rows),
-            'pagination'  => $paged['pagination'],
-        ]);
-    }
-
-    public function exportRekap()
-    {
-        $filters  = $this->rekapFilters();
-        $rows     = $this->model->getRekap($filters);
-        $filename = 'rekap_absensi_' . date('Ymd_His') . '.xls';
-
-        return $this->response
-            ->setHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8')
-            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
-            ->setBody($this->renderExcel($rows));
-    }
-
-    public function hapus(int $id)
-    {
-        $this->model->delete($id);
-        return redirect()->to(base_url('absensi'))->with('success', 'Absensi berhasil dihapus.');
-    }
-
-        public function indexHarian()
+    public function indexHarian()
     {
         $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
         $jurusan = $this->request->getGet('jurusan');
@@ -204,7 +165,7 @@ class Absensi extends BaseController
 
         if (!$kelas) {
             return redirect()
-                ->to(base_url('absensi/harian'))
+                ->to(base_url('admin/absensi/harian'))
                 ->with('error', 'Data kelas tidak ditemukan.');
         }
 
@@ -229,7 +190,7 @@ class Absensi extends BaseController
 
         if (!$kelas) {
             return redirect()
-                ->to(base_url('absensi/harian'))
+                ->to(base_url('admin/absensi/harian'))
                 ->with('error', 'Kelas tidak ditemukan.');
         }
 
@@ -287,6 +248,47 @@ class Absensi extends BaseController
             ->to(base_url('admin/absensi/harian/' . $idKelas . '?tanggal=' . $tanggal))
             ->with('success', 'Absensi harian berhasil disimpan.');
     }
+
+
+    // =========================================================================
+    // ADMIN — Rekap
+    // =========================================================================
+
+    public function rekap()
+    {
+        $filters = $this->rekapFilters();
+        $rows    = $this->model->getRekap($filters);
+        $paged   = $this->paginateArray($rows, 20);
+
+        return view('MasterAbsensi/rekap-absensi', [
+            'rekap'       => $paged['items'],
+            'kelas_list'  => $this->kelasModel->getKelasWithJurusan(),
+            'jadwal_list' => $this->jadwalModel->getAll(),
+            'status_list' => $this->statusList(),
+            'filters'     => $filters,
+            'summary'     => $this->summarizeStatus($rows),
+            'pagination'  => $paged['pagination'],
+        ]);
+    }
+
+    public function exportRekap()
+    {
+        $filters  = $this->rekapFilters();
+        $rows     = $this->model->getRekap($filters);
+        $filename = 'rekap_absensi_' . date('Ymd_His') . '.xls';
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setBody($this->renderExcel($rows));
+    }
+
+    public function hapus(int $id)
+    {
+        $this->model->delete($id);
+        return redirect()->to(base_url('absensi'))->with('success', 'Absensi berhasil dihapus.');
+    }
+
 
     // =========================================================================
     // GURU — Dashboard (pilihan: absen mapel atau absen harian wali kelas)
