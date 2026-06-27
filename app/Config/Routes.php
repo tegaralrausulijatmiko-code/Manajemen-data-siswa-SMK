@@ -91,6 +91,15 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->post('absensi/simpan', 'Absensi::simpan');
     $routes->get ('absensi/edit/(:num)', 'Absensi::edit/$1');
     $routes->post('absensi/update/(:num)', 'Absensi::update/$1');
-        $routes->post('absensi/hapus/(:num)', 'Absensi::hapus/$1');
+    $routes->post('absensi/hapus/(:num)', 'Absensi::hapus/$1');
     });
+
+    $routes->get('user', 'User::index');
+    $routes->get('user/tambah', 'User::tambah');
+    $routes->post('user/simpan', 'User::simpan');
+    $routes->get('user/edit/(:num)', 'User::edit/$1');
+    $routes->post('user/update/(:num)', 'User::update/$1');
+    $routes->post('user/toggle-status/(:num)', 'User::toggleStatus/$1');
+    $routes->post('user/reset-password/(:num)','User::resetPassword/$1');
+    $routes->post('user/hapus/(:num)', 'User::hapus/$1');
 });

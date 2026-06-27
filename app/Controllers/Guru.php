@@ -119,7 +119,7 @@ class Guru extends BaseController
 
         $payload = [
             'nama'     => $guru['nama_guru'],
-            'username' => $user,
+            'username' => $nip,
             'password' => password_hash($nip, PASSWORD_DEFAULT),
             'role'     => 'guru',
             'status'   => 'aktif',
@@ -135,7 +135,7 @@ class Guru extends BaseController
         }
 
         return redirect()->to(base_url('guru'))
-            ->with('success', 'Akun guru berhasil dibuat. Username menggunakan NAMA dan password menggunakan NIP: ' . $nip);
+            ->with('success', 'Akun guru berhasil dibuat. Username dan password menggunakan NIP: ' . $nip);
     }
 
     public function hapus($id)

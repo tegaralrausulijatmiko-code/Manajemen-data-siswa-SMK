@@ -39,6 +39,16 @@
 
         .sidebar-footer { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.78rem; opacity: 0.6; }
 
+        .nav-title{
+            padding: 14px 18px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            pointer-events: none;
+        }
+
         /* Main */
         .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
 
