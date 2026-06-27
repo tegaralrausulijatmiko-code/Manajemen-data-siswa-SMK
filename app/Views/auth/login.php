@@ -53,7 +53,7 @@
             </div>
             <button type="submit"><i class="ri-login-circle-line"></i> Login</button>
         </form>
-        <p class="hint">Default admin: admin / admin123</p>
+        <p class="hint"></p>
     </main>
 </body>
 </html>

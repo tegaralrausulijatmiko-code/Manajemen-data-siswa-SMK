@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateTblUsers extends Migration
+class Createtblusers extends Migration
 {
     public function up()
     {
@@ -81,7 +81,6 @@ class CreateTblUsers extends Migration
         ]);
 
         // Seed: akun admin default
-        // Password: (bcrypt dari password asli, jaga kerahasiaan di production)
         $this->db->table('tbl_users')->insert([
             'id_user'    => 1,
             'username'   => 'admin',
@@ -96,7 +95,22 @@ class CreateTblUsers extends Migration
             'status'     => 'aktif',
         ]);
 
-        $this->db->query('ALTER TABLE tbl_users AUTO_INCREMENT = 2');
+        // Seed: akun BK 
+        $this->db->table('tbl_users')->insert([
+            'id_user'    => 2,
+            'username'   => 'bk',
+            'nama'       => 'Bimbingan Konseling',
+            'password'   => '$2y$10$eJ.rVZQrQ5o6c2.5I2.7u.u.4Q5o6c2.5I2.7u.u.4Q5o6c2.5I2.7u.u',
+            'email'      => 'bk@sekolah.local',
+            'role'       => 'bk',
+            'id_guru'    => null,
+            'id_siswa'   => null,
+            'created_at' => '2026-06-14 12:52:39',
+            'updated_at' => '2026-06-14 05:55:53',
+            'status'     => 'aktif',
+        ]);
+
+        $this->db->query('ALTER TABLE tbl_users AUTO_INCREMENT = 3');
     }
 
     public function down()
