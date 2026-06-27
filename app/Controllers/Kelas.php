@@ -46,32 +46,37 @@ class Kelas extends BaseController
     {
         $data = [
             'id_jurusan'    => $this->request->getPost('id_jurusan'),
-            'nama_kelas'    => trim((string) $this->request->getPost('nama_kelas')),
             'tingkat'       => $this->request->getPost('tingkat'),
+            'nomor_kelas'   => $this->request->getPost('nomor_kelas'),
             'id_wali_kelas' => $this->request->getPost('id_wali_kelas'),
         ];
 
+        
+        $jurusan = $this->jurusanModel->find($data['id_jurusan']);
+
+        $data['nama_kelas'] = sprintf(
+            '%s %s %s',
+            $data['tingkat'],
+            $jurusan['kode_jurusan'],
+            $data['nomor_kelas']
+        );
+
         $rules = [
-            'nama_kelas'    => 'required|max_length[50]',
             'tingkat'       => 'required|in_list[X,XI,XII]',
             'id_jurusan'    => 'required|integer',
+            'nomor_kelas'   => 'required|integer|greater_than[0]',
             'id_wali_kelas' => 'permit_empty|integer',
         ];
 
-        $messages = [
-            'nama_kelas' => [
-                'is_unique' => 'Nama kelas sudah digunakan.',
-            ],
-        ];
 
-        if (! $this->validateData($data, $rules, $messages)) {
+        if (! $this->validateData($data, $rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $idWaliKelas = $data['id_wali_kelas'];
         if ($data['nama_kelas'] !== '' && $this->model->isNamaKelasTaken($data['nama_kelas'])) {
             return redirect()->back()->withInput()->with('errors', [
-                'nama_kelas' => 'Nama kelas sudah digunakan.',
+                'nomor_kelas' => 'Kelas tersebut sudah ada.',
             ]);
         }
 
@@ -83,10 +88,10 @@ class Kelas extends BaseController
 
         $this->model->insert([
             'id_jurusan'    => $data['id_jurusan'],
-            'nama_kelas'    => $data['nama_kelas'],
             'tingkat'       => $data['tingkat'],
+            'nomor_kelas'   => $data['nomor_kelas'],
+            'nama_kelas'    => $data['nama_kelas'],
             'id_wali_kelas' => $idWaliKelas ?: null,
-            // 'jumlah_siswa'  => $this->model->getJumSiswa(),
         ]);
 
         return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil ditambahkan.');
@@ -115,32 +120,37 @@ class Kelas extends BaseController
 
         $data = [
             'id_jurusan'    => $this->request->getPost('id_jurusan'),
-            'nama_kelas'    => trim((string) $this->request->getPost('nama_kelas')),
             'tingkat'       => $this->request->getPost('tingkat'),
+            'nomor_kelas'   => $this->request->getPost('nomor_kelas'),
             'id_wali_kelas' => $this->request->getPost('id_wali_kelas'),
         ];
 
+        $jurusan = $this->jurusanModel->find($data['id_jurusan']);
+
+        $data['nama_kelas'] = sprintf(
+            '%s %s %s',
+            $data['tingkat'],
+            $jurusan['kode_jurusan'],
+            $data['nomor_kelas']
+        );
+
         $rules = [
-            'nama_kelas'    => 'required|max_length[50]',
             'tingkat'       => 'required|in_list[X,XI,XII]',
             'id_jurusan'    => 'required|integer',
+            'nomor_kelas'   => 'required|integer|greater_than[0]',
             'id_wali_kelas' => 'permit_empty|integer',
         ];
 
-        $messages = [
-            'nama_kelas' => [
-                'is_unique' => 'Nama kelas sudah digunakan.',
-            ],
-        ];
 
-        if (! $this->validateData($data, $rules, $messages)) {
+        if (! $this->validateData($data, $rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $idWaliKelas = $data['id_wali_kelas'];
         if ($data['nama_kelas'] !== '' && $this->model->isNamaKelasTaken($data['nama_kelas'], (int) $id)) {
             return redirect()->back()->withInput()->with('errors', [
-                'nama_kelas' => 'Nama kelas sudah digunakan.',
+                'nomor_kelas' => 'Kelas tersebut sudah ada.',
+
             ]);
         }
 
@@ -153,6 +163,7 @@ class Kelas extends BaseController
         $this->model->update($id, [
             'id_jurusan'    => $data['id_jurusan'],
             'nama_kelas'    => $data['nama_kelas'],
+            'nomor_kelas'   => $data['nomor_kelas'],
             'tingkat'       => $data['tingkat'],
             'id_wali_kelas' => $idWaliKelas ?: null,
         ]);

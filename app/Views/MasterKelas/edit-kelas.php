@@ -4,9 +4,9 @@
 <?php $jurusan_list = $jurusan_list ?? []; ?>
 <?php $guru_list = $guru_list ?? []; ?>
 <?php
-    $namaKelas   = old('nama_kelas', $kelas['nama_kelas'] ?? '');
     $tingkat     = old('tingkat', $kelas['tingkat'] ?? '');
     $jurusanId   = old('id_jurusan', $kelas['id_jurusan'] ?? '');
+    $nomorKelas  = old('nomor_kelas', $kelas['nomor_kelas'] ?? '');
     $waliKelasId = old('id_wali_kelas', $kelas['id_wali_kelas'] ?? '');
 ?>
 
@@ -28,24 +28,18 @@
         <form method="post" action="<?= base_url('kelas/update/' . $kelas['id_kelas']) ?>">
             <?= csrf_field() ?>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Nama Kelas <span class="required">*</span></label>
-                    <input type="text" name="nama_kelas" class="form-control" value="<?= esc($namaKelas) ?>" required maxlength="50">
-                    <?php if (isset($errors['nama_kelas'])): ?>
-                    <small style="color:var(--danger);"><?= $errors['nama_kelas'] ?></small>
-                    <?php endif; ?>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Tingkat <span class="required">*</span></label>
-                    <select name="tingkat" class="form-control" required>
-                        <?php foreach (['X','XI','XII'] as $t): ?>
-                        <option value="<?= $t ?>" <?= $tingkat == $t ? 'selected':'' ?>><?= $t ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tingkat <span class="required">*</span></label>
+                <select name="tingkat" class="form-control" required>
+                    <?php foreach (['X','XI','XII'] as $t): ?>
+                        <option value="<?= $t ?>" <?= $tingkat == $t ? 'selected' : '' ?>>
+                            <?= $t ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Jurusan <span class="required">*</span></label>
                 <select name="id_jurusan" class="form-control" required>
@@ -56,6 +50,23 @@
                     <?php endforeach; ?>
                 </select>
             </div>
+
+
+        </div>
+            <div class="form-group">
+                <label class="form-label">Nomor Kelas <span class="required">*</span></label>
+                <input type="number"
+                    name="nomor_kelas"
+                    class="form-control"
+                    min="1"
+                    value="<?= esc($nomorKelas) ?>"
+                    required>
+
+                <?php if (isset($errors['nomor_kelas'])): ?>
+                    <small style="color:var(--danger);"><?= $errors['nomor_kelas'] ?></small>
+                <?php endif; ?>
+            </div>
+
 
             <div class="form-group">
                 <label class="form-label">Wali Kelas (Opsional)</label>

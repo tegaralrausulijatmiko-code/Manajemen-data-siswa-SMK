@@ -23,35 +23,46 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Nama Kelas <span class="required">*</span></label>
-                    <input type="text" name="nama_kelas" class="form-control" placeholder="cth: X RPL 1"
-                        value="<?= old('nama_kelas') ?>" required maxlength="50">
-                    <?php if (isset($errors['nama_kelas'])): ?>
-                    <small style="color:var(--danger);"><?= $errors['nama_kelas'] ?></small>
-                    <?php endif; ?>
+                    <label class="form-label">Tingkat <span class="required">*</span></label>
+                    <select name="tingkat" class="form-control" required>
+                        <option value="">-- Pilih --</option>
+                        <?php foreach (['X','XI','XII'] as $t): ?>
+                        <option value="<?= $t ?>" <?= old('tingkat') == $t ? 'selected' : '' ?>>
+                            <?= $t ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Tingkat <span class="required">*</span></label>
-                        <select name="tingkat" class="form-control" required>
-                            <option value="">-- Pilih --</option>
-                            <?php foreach (['X','XI','XII'] as $t): ?>
-                            <option value="<?= $t ?>" <?= old('tingkat') == $t ? 'selected':'' ?>><?= $t ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <label class="form-label">Jurusan <span class="required">*</span></label>
+                    <select name="id_jurusan" class="form-control" required>
+                        <option value="">-- Pilih Jurusan --</option>
+                        <?php foreach ($jurusan_list as $j): ?>
+                        <option value="<?= $j['id_jurusan'] ?>"
+                            <?= old('id_jurusan') == $j['id_jurusan'] ? 'selected':'' ?>>
+                            <?= esc($j['kode_jurusan']) ?> – <?= esc($j['nama_jurusan']) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
+
+
             </div>
             
+
             <div class="form-group">
-                <label class="form-label">Jurusan <span class="required">*</span></label>
-                <select name="id_jurusan" class="form-control" required>
-                    <option value="">-- Pilih Jurusan --</option>
-                    <?php foreach ($jurusan_list as $j): ?>
-                    <option value="<?= $j['id_jurusan'] ?>"
-                        <?= old('id_jurusan') == $j['id_jurusan'] ? 'selected':'' ?>>
-                        <?= esc($j['kode_jurusan']) ?> – <?= esc($j['nama_jurusan']) ?>
-                    </option>
-                    <?php endforeach; ?>
-                </select>
+                <label class="form-label">Nomor Kelas <span class="required">*</span></label>
+                <input type="number"
+                    name="nomor_kelas"
+                    class="form-control"
+                    min="1"
+                    placeholder="Contoh: 1"
+                    value="<?= old('nomor_kelas') ?>"
+                    required>
+
+                <?php if (isset($errors['nomor_kelas'])): ?>
+                    <small style="color:var(--danger);"><?= $errors['nomor_kelas'] ?></small>
+                <?php endif; ?>
             </div>
             
 
