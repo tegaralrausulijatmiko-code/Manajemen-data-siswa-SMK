@@ -23,76 +23,269 @@ class Absensi extends BaseController
     }
 
     // =========================================================================
-    // ADMIN — Absensi umum
+    // ADMIN — Absensi Jadwal Mapel
     // =========================================================================
-
-    public function index()
+    public function indexMapel()
     {
-        $keyword = $this->request->getGet('q');
         $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
         $kelas   = $this->request->getGet('kelas');
+        $guru    = $this->request->getGet('guru');
 
-        $siswaList  = $this->siswaModel->getAll($keyword, $kelas);
-        $attendance = $this->model->getByDateAndKelas($tanggal, $kelas);
+        $jadwalList = $this->jadwalModel->getAll(
+            $kelas ?: null,
+            null,
+            $guru ?: null
+        );
 
-        return view('MasterAbsensi/master-data-absensi', [
-            'siswa_list'     => $siswaList,
-            'attendance_map' => $attendance,
-            'kelas_list'     => $this->kelasModel->getKelasWithJurusan(),
-            'keyword'        => $keyword,
-            'filter_tanggal' => $tanggal,
-            'filter_kelas'   => $kelas,
+        return view('MasterAbsensi/absensi-mapel', [
+            'jadwal_list'   => $jadwalList,
+            'kelas_list'    => $this->kelasModel->getKelasWithJurusan(),
+            'guru_list'     => $this->jadwalModel->getGuruList(),
+            'tanggal'       => $tanggal,
+            'filter_kelas'  => $kelas,
+            'filter_guru'   => $guru,
         ]);
     }
 
-    public function simpanAbsensi()
+    // =========================================================================
+    // ADMIN — Absensi dari Jadwal
+    // =========================================================================
+
+    public function formMapel(int $id)
     {
-        $statuses      = $this->request->getPost('status') ?? [];
-        $idKelasMap    = $this->request->getPost('id_kelas') ?? [];
-        $keteranganMap = $this->request->getPost('keterangan') ?? [];
-        $tanggal       = $this->request->getPost('tanggal') ?: date('Y-m-d');
-        $validStatuses = array_merge(['Belum Absen'], $this->statusList());
+        $jadwal = $this->jadwalModel->getDetail($id);
+        if (! $jadwal) {
+            return redirect()->to(base_url('jadwal'))->with('error', 'Jadwal tidak ditemukan.');
+        }
 
-        foreach ($statuses as $id_siswa => $status) {
-            if (! in_array($status, $validStatuses, true)) {
-                continue;
+        $tanggal    = $this->request->getGet('tanggal') ?: date('Y-m-d');
+        $siswa      = $this->siswaModel->getAll(null, (string) $jadwal['id_kelas']);
+        $absensiMap = $this->model->getByJadwalDate($id, $tanggal);
+
+        return view('MasterAbsensi/form-mapel', [
+            'jadwal'      => $jadwal,
+            'siswa_list'  => $siswa,
+            'tanggal'     => $tanggal,
+            'absensi_map' => $absensiMap,
+            'status_list' => $this->statusList(),
+        ]);
+    }
+
+    public function simpanMapel(int $id)
+    {
+        $jadwal = $this->jadwalModel->getDetail($id);
+        if (! $jadwal) {
+            return redirect()->to(base_url('jadwal'))->with('error', 'Jadwal tidak ditemukan.');
+        }
+
+        $tanggal = $this->request->getPost('tanggal');
+        if (! $tanggal || ! strtotime($tanggal)) {
+            return redirect()->back()->withInput()->with('error', 'Tanggal absensi wajib diisi.');
+        }
+
+        $statuses   = $this->request->getPost('status') ?? [];
+        $keterangan = $this->request->getPost('keterangan') ?? [];
+        $statusList = $this->statusList();
+        $siswa      = $this->siswaModel->getAll(null, (string) $jadwal['id_kelas']);
+
+        if (empty($siswa)) {
+            return redirect()->back()->with('error', 'Tidak ada siswa pada kelas ini.');
+        }
+
+        $db = db_connect();
+        $db->transStart();
+
+        foreach ($siswa as $row) {
+            $idSiswa = (int) $row['id_siswa'];
+            $status  = $statuses[$idSiswa] ?? 'Hadir';
+
+            if (! in_array($status, $statusList, true)) {
+                $status = 'Hadir';
             }
 
-            $existing = $this->model->where(['id_siswa' => $id_siswa, 'tanggal' => $tanggal])->first();
-
-            if ($status === 'Belum Absen') {
-                if ($existing) {
-                    $this->model->delete($existing['id_absensi']);
-                }
-                continue;
-            }
-
-            $keterangan = in_array($status, ['Izin', 'Sakit'], true)
-                ? trim((string) ($keteranganMap[$id_siswa] ?? ''))
-                : '';
-
-            $data = [
-                'id_siswa'   => $id_siswa,
-                'id_kelas'   => $idKelasMap[$id_siswa] ?? null,
+            $payload = [
+                'id_siswa'   => $idSiswa,
+                'id_kelas'   => $jadwal['id_kelas'],
+                'id_jadwal'  => $jadwal['id_jadwal'],
+                'jenis'      => 'mapel',
                 'tanggal'    => $tanggal,
-                'jenis'      => 'harian',
                 'status'     => $status,
-                'keterangan' => $keterangan,
+                'keterangan' => in_array($status, ['Izin', 'Sakit'], true)
+                    ? trim($keterangan[$idSiswa] ?? '')
+                    : '',
             ];
 
+            $existing = $this->model->findByStudentScheduleDate($idSiswa, (int) $jadwal['id_jadwal'], $tanggal);
             if ($existing) {
-                $this->model->update($existing['id_absensi'], $data);
+                $this->model->update($existing['id_absensi'], $payload);
             } else {
-                $this->model->insert($data);
+                $this->model->insert($payload);
             }
         }
 
-        $query    = http_build_query(array_filter([
-            'kelas'   => $this->request->getPost('kelas'),
-            'tanggal' => $tanggal,
-            'q'       => $this->request->getPost('q'),
-        ]));
-        return redirect()->to(base_url('absensi' . ($query ? '?' . $query : '')))->with('success', 'Perubahan absensi berhasil disimpan.');
+        $db->transComplete();
+
+        if (! $db->transStatus()) {
+            return redirect()->back()->with('error', 'Absensi gagal disimpan.');
+        }
+
+        return redirect()
+            ->to(base_url('admin/absensi/mapel/' . $id . '?tanggal=' . $tanggal))
+            ->with('success', 'Absensi jadwal berhasil disimpan.');
+    }
+
+    // =========================================================================
+    // ADMIN — Rekap
+    // =========================================================================
+
+    public function rekap()
+    {
+        $filters = $this->rekapFilters();
+        $rows    = $this->model->getRekap($filters);
+        $paged   = $this->paginateArray($rows, 20);
+
+        return view('MasterAbsensi/rekap-absensi', [
+            'rekap'       => $paged['items'],
+            'kelas_list'  => $this->kelasModel->getKelasWithJurusan(),
+            'jadwal_list' => $this->jadwalModel->getAll(),
+            'status_list' => $this->statusList(),
+            'filters'     => $filters,
+            'summary'     => $this->summarizeStatus($rows),
+            'pagination'  => $paged['pagination'],
+        ]);
+    }
+
+    public function exportRekap()
+    {
+        $filters  = $this->rekapFilters();
+        $rows     = $this->model->getRekap($filters);
+        $filename = 'rekap_absensi_' . date('Ymd_His') . '.xls';
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setBody($this->renderExcel($rows));
+    }
+
+    public function hapus(int $id)
+    {
+        $this->model->delete($id);
+        return redirect()->to(base_url('absensi'))->with('success', 'Absensi berhasil dihapus.');
+    }
+
+        public function indexHarian()
+    {
+        $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
+        $jurusan = $this->request->getGet('jurusan');
+
+        $kelasList = $this->kelasModel->getKelasWithJurusan();
+
+        // Filter jurusan
+        if (!empty($jurusan)) {
+            $kelasList = array_filter($kelasList, function ($k) use ($jurusan) {
+                return $k['id_jurusan'] == $jurusan;
+            });
+        }
+
+        return view('MasterAbsensi/absensi-harian', [
+            'tanggal'         => $tanggal,
+            'kelas_list'      => $kelasList,
+            'jurusan_list'    => $this->kelasModel->getJurusanList(),
+            'filter_jurusan'  => $jurusan,
+        ]);
+    }
+
+    public function formHarian($idKelas)
+    {
+        $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
+
+        // Detail kelas
+        $kelas = $this->kelasModel->getDetail($idKelas);
+
+        if (!$kelas) {
+            return redirect()
+                ->to(base_url('absensi/harian'))
+                ->with('error', 'Data kelas tidak ditemukan.');
+        }
+
+        // Daftar siswa
+        $siswa = $this->siswaModel->getAll(null, (string) $idKelas);
+
+        // Absensi yang sudah ada
+        $absensiMap = $this->model->getHarianByKelasDate($idKelas, $tanggal);
+
+        return view('MasterAbsensi/form-harian', [
+            'kelas'       => $kelas,
+            'siswa_list'  => $siswa,
+            'tanggal'     => $tanggal,
+            'absensi_map' => $absensiMap,
+            'status_list' => $this->statusListHarian(),
+        ]);
+    }
+
+    public function simpanHarian($idKelas)
+    {
+        $kelas = $this->kelasModel->getDetail($idKelas);
+
+        if (!$kelas) {
+            return redirect()
+                ->to(base_url('absensi/harian'))
+                ->with('error', 'Kelas tidak ditemukan.');
+        }
+
+        $tanggal    = $this->request->getPost('tanggal') ?: date('Y-m-d');
+        $statuses   = $this->request->getPost('status') ?? [];
+        $keterangan = $this->request->getPost('keterangan') ?? [];
+        $statusList = $this->statusListHarian();
+
+        $siswa = $this->siswaModel->getAll(null, (string) $idKelas);
+
+        if (empty($siswa)) {
+            return redirect()->back()->with('error', 'Tidak ada siswa pada kelas ini.');
+        }
+
+        $db = db_connect();
+        $db->transStart();
+
+        foreach ($siswa as $row) {
+            $idSiswa = (int) $row['id_siswa'];
+            $status  = $statuses[$idSiswa] ?? 'Hadir';
+
+            if (!in_array($status, $statusList, true)) {
+                $status = 'Hadir';
+            }
+
+            $payload = [
+                'id_siswa'   => $idSiswa,
+                'id_kelas'   => $idKelas,
+                'id_jadwal'  => null,
+                'jenis'      => 'harian',
+                'tanggal'    => $tanggal,
+                'status'     => $status,
+                'keterangan' => in_array($status, ['Izin', 'Sakit'], true)
+                    ? trim($keterangan[$idSiswa] ?? '')
+                    : '',
+            ];
+
+            // Cek apakah sudah ada absensi harian siswa pada tanggal tersebut
+            $existing = $this->model->findHarian($idSiswa, $tanggal);
+
+            if ($existing) {
+                $this->model->update($existing['id_absensi'], $payload);
+            } else {
+                $this->model->insert($payload);
+            }
+        }
+
+        $db->transComplete();
+
+        if (!$db->transStatus()) {
+            return redirect()->back()->with('error', 'Absensi harian gagal disimpan.');
+        }
+
+        return redirect()
+            ->to(base_url('admin/absensi/harian/' . $idKelas . '?tanggal=' . $tanggal))
+            ->with('success', 'Absensi harian berhasil disimpan.');
     }
 
     // =========================================================================
@@ -333,131 +526,6 @@ class Absensi extends BaseController
         ]);
     }
 
-    // =========================================================================
-    // ADMIN — Absensi dari Jadwal
-    // =========================================================================
-
-    public function jadwal(int $id)
-    {
-        $jadwal = $this->jadwalModel->getDetail($id);
-        if (! $jadwal) {
-            return redirect()->to(base_url('jadwal'))->with('error', 'Jadwal tidak ditemukan.');
-        }
-
-        $tanggal    = $this->request->getGet('tanggal') ?: date('Y-m-d');
-        $siswa      = $this->siswaModel->getAll(null, (string) $jadwal['id_kelas']);
-        $absensiMap = $this->model->getByJadwalDate($id, $tanggal);
-
-        return view('MasterAbsensi/input-absensi-jadwal', [
-            'jadwal'      => $jadwal,
-            'siswa_list'  => $siswa,
-            'tanggal'     => $tanggal,
-            'absensi_map' => $absensiMap,
-            'status_list' => $this->statusList(),
-        ]);
-    }
-
-    public function simpanJadwal(int $id)
-    {
-        $jadwal = $this->jadwalModel->getDetail($id);
-        if (! $jadwal) {
-            return redirect()->to(base_url('jadwal'))->with('error', 'Jadwal tidak ditemukan.');
-        }
-
-        $tanggal = $this->request->getPost('tanggal');
-        if (! $tanggal || ! strtotime($tanggal)) {
-            return redirect()->back()->withInput()->with('error', 'Tanggal absensi wajib diisi.');
-        }
-
-        $statuses   = $this->request->getPost('status') ?? [];
-        $keterangan = $this->request->getPost('keterangan') ?? [];
-        $statusList = $this->statusList();
-        $siswa      = $this->siswaModel->getAll(null, (string) $jadwal['id_kelas']);
-
-        if (empty($siswa)) {
-            return redirect()->back()->with('error', 'Tidak ada siswa pada kelas ini.');
-        }
-
-        $db = db_connect();
-        $db->transStart();
-
-        foreach ($siswa as $row) {
-            $idSiswa = (int) $row['id_siswa'];
-            $status  = $statuses[$idSiswa] ?? 'Hadir';
-
-            if (! in_array($status, $statusList, true)) {
-                $status = 'Hadir';
-            }
-
-            $payload = [
-                'id_siswa'   => $idSiswa,
-                'id_kelas'   => $jadwal['id_kelas'],
-                'id_jadwal'  => $jadwal['id_jadwal'],
-                'jenis'      => 'mapel',
-                'tanggal'    => $tanggal,
-                'status'     => $status,
-                'keterangan' => in_array($status, ['Izin', 'Sakit'], true)
-                    ? trim($keterangan[$idSiswa] ?? '')
-                    : '',
-            ];
-
-            $existing = $this->model->findByStudentScheduleDate($idSiswa, (int) $jadwal['id_jadwal'], $tanggal);
-            if ($existing) {
-                $this->model->update($existing['id_absensi'], $payload);
-            } else {
-                $this->model->insert($payload);
-            }
-        }
-
-        $db->transComplete();
-
-        if (! $db->transStatus()) {
-            return redirect()->back()->with('error', 'Absensi gagal disimpan.');
-        }
-
-        return redirect()
-            ->to(base_url('absensi/jadwal/' . $id . '?tanggal=' . $tanggal))
-            ->with('success', 'Absensi jadwal berhasil disimpan.');
-    }
-
-    // =========================================================================
-    // ADMIN — Rekap
-    // =========================================================================
-
-    public function rekap()
-    {
-        $filters = $this->rekapFilters();
-        $rows    = $this->model->getRekap($filters);
-        $paged   = $this->paginateArray($rows, 20);
-
-        return view('MasterAbsensi/rekap-absensi', [
-            'rekap'       => $paged['items'],
-            'kelas_list'  => $this->kelasModel->getKelasWithJurusan(),
-            'jadwal_list' => $this->jadwalModel->getAll(),
-            'status_list' => $this->statusList(),
-            'filters'     => $filters,
-            'summary'     => $this->summarizeStatus($rows),
-            'pagination'  => $paged['pagination'],
-        ]);
-    }
-
-    public function exportRekap()
-    {
-        $filters  = $this->rekapFilters();
-        $rows     = $this->model->getRekap($filters);
-        $filename = 'rekap_absensi_' . date('Ymd_His') . '.xls';
-
-        return $this->response
-            ->setHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8')
-            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
-            ->setBody($this->renderExcel($rows));
-    }
-
-    public function hapus(int $id)
-    {
-        $this->model->delete($id);
-        return redirect()->to(base_url('absensi'))->with('success', 'Absensi berhasil dihapus.');
-    }
 
     // =========================================================================
     // Private helpers

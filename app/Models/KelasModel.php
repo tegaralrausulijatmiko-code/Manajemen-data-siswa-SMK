@@ -40,13 +40,27 @@ class KelasModel extends Model
         return $builder->orderBy('k.tingkat')->orderBy('j.kode_jurusan')->orderBy('k.nama_kelas')->get()->getResultArray();
     }
 
-    public function getKelasWithJurusan(): array
+    public function getKelasWithJurusan()
     {
         return $this->db->table('tbl_kelas k')
-            ->select('k.id_kelas, k.nama_kelas, j.nama_jurusan')
-            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan', 'left')
-            ->orderBy('k.tingkat')->orderBy('k.nama_kelas')
-            ->get()->getResultArray();
+            ->select("
+                k.id_kelas,
+                k.nama_kelas,
+                k.tingkat,
+                k.id_jurusan,
+                j.kode_jurusan,
+                j.nama_jurusan,
+                g.nama_guru AS nama_wali,
+                COUNT(s.id_siswa) AS jumlah_siswa
+            ")
+            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan')
+            ->join('tbl_guru g', 'g.id_guru = k.id_wali_kelas', 'left')
+            ->join('tbl_siswa s', 's.id_kelas = k.id_kelas', 'left')
+            ->groupBy('k.id_kelas')
+            ->orderBy('k.tingkat')
+            ->orderBy('k.nama_kelas')
+            ->get()
+            ->getResultArray();
     }
 
     public function isNamaKelasTaken(string $namaKelas, ?int $excludeId = null): bool
@@ -119,5 +133,29 @@ class KelasModel extends Model
             ->orderBy('k.nama_kelas', 'ASC')
             ->get()
             ->getResultArray();
+    }
+
+    public function getJurusanList()
+    {
+        return $this->db->table('tbl_jurusan')
+            ->orderBy('kode_jurusan', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
+
+    public function getDetail($idKelas)
+    {
+        return $this->db->table('tbl_kelas k')
+            ->select('
+                k.*,
+                j.kode_jurusan,
+                j.nama_jurusan,
+                g.nama_guru AS nama_wali
+            ')
+            ->join('tbl_jurusan j', 'j.id_jurusan = k.id_jurusan')
+            ->join('tbl_guru g', 'g.id_guru = k.id_wali_kelas', 'left')
+            ->where('k.id_kelas', $idKelas)
+            ->get()
+            ->getRowArray();
     }
 }

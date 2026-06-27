@@ -87,4 +87,13 @@ class JadwalModel extends Model
             ->get()
             ->getRowArray();
     }
+
+    public function getGuruList()
+    {
+        return $this->db->table('tbl_guru')
+            ->select('id_guru, nama_guru')
+            ->orderBy('nama_guru', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
 }
