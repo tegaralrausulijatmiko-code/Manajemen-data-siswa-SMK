@@ -11,7 +11,7 @@ class JadwalModel extends Model
     protected $returnType = 'array';
 
     protected $allowedFields = [
-        'id_kelas', 'id_mapel', 'id_guru', 'hari', 'jam_mulai', 'jam_selesai', 'ruang',
+        'id_kelas', 'id_mapel', 'id_guru', 'hari', 'jam_mulai', 'jam_selesai',
     ];
 
     protected $useTimestamps = true;
@@ -31,7 +31,6 @@ class JadwalModel extends Model
                 ->like('k.nama_kelas', $keyword)
                 ->orLike('m.nama_mapel', $keyword)
                 ->orLike('g.nama_guru', $keyword)
-                ->orLike('jd.ruang', $keyword)
             ->groupEnd();
         }
 

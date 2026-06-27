@@ -93,7 +93,6 @@ class Jadwal extends BaseController
             'hari'        => 'required|in_list[Senin,Selasa,Rabu,Kamis,Jumat,Sabtu]',
             'jam_mulai'   => 'required',
             'jam_selesai' => 'required',
-            'ruang'       => 'permit_empty|max_length[50]',
         ];
     }
 
@@ -106,7 +105,6 @@ class Jadwal extends BaseController
             'hari'        => $this->request->getPost('hari'),
             'jam_mulai'   => $this->request->getPost('jam_mulai'),
             'jam_selesai' => $this->request->getPost('jam_selesai'),
-            'ruang'       => $this->request->getPost('ruang'),
         ];
     }
 

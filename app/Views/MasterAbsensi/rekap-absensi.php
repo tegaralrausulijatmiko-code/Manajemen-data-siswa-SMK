@@ -73,7 +73,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">Jenis Absensi</label>
-                <select name="jenis" class="form-control">
+                <select name="jenis" id="jenis" class="form-control">
                     <option value="">Semua Jenis</option>
                     <option value="harian"  <?= ($filters['jenis'] ?? '') === 'harian'  ? 'selected' : '' ?>>Absen Harian </option>
                     <option value="mapel"   <?= ($filters['jenis'] ?? '') === 'mapel'   ? 'selected' : '' ?>>Absen Mata Pelajaran</option>
@@ -95,12 +95,12 @@
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">Jadwal (Mapel)</label>
-                <select name="jadwal" class="form-control">
+                <select name="jadwal" id="jadwal" class="form-control">
                     <option value="">Semua Jadwal</option>
                     <?php foreach ($jadwal_list as $jadwal):
                         $lbl = ($jadwal['nama_kelas'] ?? '-')
-                             . ' – ' . ($jadwal['nama_mapel'] ?? '-')
-                             . ' (' . $jadwal['hari'] . ', ' . substr($jadwal['jam_mulai'], 0, 5) . ')';
+                            . ' – ' . ($jadwal['nama_mapel'] ?? '-')
+                            . ' (' . $jadwal['hari'] . ', ' . substr($jadwal['jam_mulai'], 0, 5) . ')';
                     ?>
                         <option value="<?= $jadwal['id_jadwal'] ?>"
                             <?= ($filters['id_jadwal'] ?? '') == $jadwal['id_jadwal'] ? 'selected' : '' ?>>
@@ -219,3 +219,22 @@ echo view('Template/layout', [
     'extra_css' => $extra_css,
 ]);
 ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const jenis = document.getElementById('jenis');
+    const jadwal = document.getElementById('jadwal');
+
+    function toggleJadwal() {
+        if (jenis.value === 'harian') {
+            jadwal.disabled = true;
+            jadwal.value = '';
+        } else {
+            jadwal.disabled = false;
+        }
+    }
+
+    toggleJadwal(); // saat halaman pertama kali dibuka
+    jenis.addEventListener('change', toggleJadwal);
+});
+</script>

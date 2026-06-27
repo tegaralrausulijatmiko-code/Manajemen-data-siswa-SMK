@@ -123,7 +123,6 @@ CREATE TABLE `tbl_jadwal` (
   `hari` enum('Senin','Selasa','Rabu','Kamis','Jumat','Sabtu') NOT NULL,
   `jam_mulai` time NOT NULL,
   `jam_selesai` time NOT NULL,
-  `ruang` varchar(50) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -132,7 +131,7 @@ CREATE TABLE `tbl_jadwal` (
 -- Dumping data untuk tabel `tbl_jadwal`
 --
 
-INSERT INTO `tbl_jadwal` (`id_jadwal`, `id_kelas`, `id_mapel`, `id_guru`, `hari`, `jam_mulai`, `jam_selesai`, `ruang`, `created_at`, `updated_at`) VALUES
+INSERT INTO `tbl_jadwal` (`id_jadwal`, `id_kelas`, `id_mapel`, `id_guru`, `hari`, `jam_mulai`, `jam_selesai`, `created_at`, `updated_at`) VALUES
 (4, 12, 6, 1975, 'Selasa', '15:00:00', '17:30:00', '401', '2026-06-20 16:52:14', '2026-06-23 11:48:04'),
 (5, 9, 11, 1872, 'Kamis', '10:50:00', '13:20:00', '507', '2026-06-23 11:49:00', '2026-06-23 11:49:00');
 
