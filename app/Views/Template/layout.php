@@ -216,7 +216,10 @@
             const linkUrl = new URL(href, window.location.origin);
             const linkPath = linkUrl.pathname.replace(/\/$/, '');
 
-            if (currentPath === linkPath || (linkPath !== '' && currentPath.endsWith(linkPath))) {
+            const isExactMatch = currentPath === linkPath;
+            const isSubpath = linkPath !== '' && currentPath.startsWith(linkPath + '/');
+
+            if (isExactMatch || isSubpath) {
                 link.classList.add('active');
             }
         });

@@ -14,28 +14,60 @@
             <?= csrf_field() ?>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Kelas <span class="required">*</span></label>
-                    <select name="id_kelas" class="form-control" required>
-                        <option value="">-- Pilih Kelas --</option>
-                        <?php foreach ($kelas_list as $k): ?><option value="<?= $k['id_kelas'] ?>" <?= old('id_kelas') == $k['id_kelas'] ? 'selected' : '' ?>><?= esc($k['nama_kelas']) ?></option><?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label class="form-label">Mata Pelajaran <span class="required">*</span></label>
-                    <select name="id_mapel" class="form-control" required>
+                    <select id="id_mapel" name="id_mapel" class="form-control" required>
                         <option value="">-- Pilih Mapel --</option>
                         <?php foreach ($mapel_list as $m): ?><option value="<?= $m['id_mapel'] ?>" <?= old('id_mapel') == $m['id_mapel'] ? 'selected' : '' ?>><?= esc($m['nama_mapel']) ?></option><?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Guru <span class="required">*</span></label>
+                    <select id="id_guru" name="id_guru" class="form-control" required>
+                        <option value="">-- Pilih Guru --</option>
+                        <?php foreach ($guru_list as $g): ?><option value="<?= $g['id_guru'] ?>" <?= old('id_guru') == $g['id_guru'] ? 'selected' : '' ?>><?= esc($g['nama_guru']) ?></option><?php endforeach; ?>
                     </select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Guru <span class="required">*</span></label>
-                    <select name="id_guru" class="form-control" required>
-                        <option value="">-- Pilih Guru --</option>
-                        <?php foreach ($guru_list as $g): ?><option value="<?= $g['id_guru'] ?>" <?= old('id_guru') == $g['id_guru'] ? 'selected' : '' ?>><?= esc($g['nama_guru']) ?></option><?php endforeach; ?>
+                    <label class="form-label">Kelas <span class="required">*</span></label>
+
+                    <select id="id_kelas" name="id_kelas" class="form-control" required>
+                        <option value="">-- Pilih Kelas --</option>
+
+                        <?php
+                        $jurusanAktif = '';
+
+                        foreach ($kelas_list as $k):
+
+                            if ($jurusanAktif != $k['nama_jurusan']) {
+
+                                if ($jurusanAktif != '') {
+                                    echo '</optgroup>';
+                                }
+
+                                $jurusanAktif = $k['nama_jurusan'];
+
+                                echo '<optgroup label="' . esc($jurusanAktif) . '">';
+                            }
+                        ?>
+
+                            <option
+                                value="<?= $k['id_kelas'] ?>"
+                                <?= old('id_kelas') == $k['id_kelas'] ? 'selected' : '' ?>>
+                                <?= esc($k['nama_kelas']) ?>
+                            </option>
+
+                        <?php endforeach; ?>
+
+                        <?php if ($jurusanAktif != ''): ?>
+                            </optgroup>
+                        <?php endif; ?>
+
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">Hari <span class="required">*</span></label>
                     <select name="hari" class="form-control" required>
@@ -55,6 +87,43 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    new TomSelect('#id_mapel', {
+        create: false,
+        sortField: {
+            field: 'text',
+            direction: 'asc',
+        },
+        placeholder: 'Pilih Mata Pelajaran',
+        dropdownParent: 'body',
+    });
+
+    new TomSelect('#id_guru', {
+        create: false,
+        sortField: {
+            field: 'text',
+            direction: 'asc',
+        },
+        placeholder: 'Pilih Guru',
+        dropdownParent: 'body',
+
+    });
+
+    new TomSelect('#id_kelas', {
+        create: false,
+        sortField: {
+            field: 'text',
+            direction: 'asc',
+        },
+        placeholder: 'Pilih Kelas',
+        dropdownParent: 'body',
+    });
+
+});
+</script>
 
 <?php
 $content = ob_get_clean();
