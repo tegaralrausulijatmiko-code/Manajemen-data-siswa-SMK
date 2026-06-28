@@ -48,14 +48,35 @@
 
             <div class="form-group">
                 <label class="form-label">Kelas <span class="required">*</span></label>
-                <select name="id_kelas" class="form-control" required>
+
+                <select name="id_kelas" id="id_kelas" class="form-control" required>
                     <option value="">-- Pilih Kelas --</option>
-                    <?php foreach ($kelas_list as $k): ?>
-                        <option value="<?= $k['id_kelas'] ?>" 
-                            <?= ($id_kelas ?? '') == $k['id_kelas'] ? 'selected' : '' ?>>
+
+                    <?php
+                    $currentJurusan = '';
+
+                    foreach ($kelas_list as $k):
+
+                        if ($currentJurusan !== $k['nama_jurusan']):
+                            if ($currentJurusan !== ''):
+                                echo '</optgroup>';
+                            endif;
+
+                            $currentJurusan = $k['nama_jurusan'];
+                    ?>
+                        <optgroup label="<?= esc($currentJurusan) ?>">
+                    <?php endif; ?>
+
+                        <option value="<?= $k['id_kelas'] ?>"
+                            <?= ($id_kelas ?? old('id_kelas')) == $k['id_kelas'] ? 'selected' : '' ?>>
                             <?= esc($k['nama_kelas']) ?>
                         </option>
+
                     <?php endforeach; ?>
+
+                    <?php if ($currentJurusan !== ''): ?>
+                        </optgroup>
+                    <?php endif; ?>
                 </select>
             </div>
 
@@ -82,6 +103,22 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#id_kelas', {
+        create: false,
+        allowEmptyOption: true,
+        placeholder: '-- Pilih Guru --',
+        maxOptions: 100,
+        sortField: {
+            field: 'text',
+            direction: 'asc'
+        },
+        dropdownParent: 'body',
+    });
+});
+</script>
 
 <?php
 $content = ob_get_clean();

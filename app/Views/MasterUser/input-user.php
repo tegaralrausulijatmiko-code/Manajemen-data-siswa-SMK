@@ -228,6 +228,8 @@ function togglePassword(inputId, btn) {
 }
 </script>
 
+
+
 <?php
 $content = ob_get_clean();
 echo view('Template/layout', [

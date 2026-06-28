@@ -70,7 +70,7 @@
 
             <div class="form-group">
                 <label class="form-label">Wali Kelas (Opsional)</label>
-                <select name="id_wali_kelas" class="form-control">
+                <select name="id_wali_kelas" id="id_wali_kelas" class="form-control">
                     <option value="">-- Tidak Ada --</option>
                     <?php foreach ($guru_list as $g): ?>
                     <option value="<?= $g['id_guru'] ?>" <?= $waliKelasId == $g['id_guru'] ? 'selected':'' ?>>
@@ -90,6 +90,23 @@
         </form>
     </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#id_wali_kelas', {
+        create: false,
+        allowEmptyOption: true,
+        placeholder: '-- Pilih Guru --',
+        maxOptions: 100,
+        sortField: {
+            field: 'text',
+            direction: 'asc'
+        },
+        dropdownParent: 'body',
+    });
+});
+</script>
 
 <?php
 $content = ob_get_clean();

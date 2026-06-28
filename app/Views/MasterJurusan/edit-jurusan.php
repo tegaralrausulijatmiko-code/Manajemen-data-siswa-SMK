@@ -36,7 +36,7 @@
 
             <div class="form-group">
                 <label class="form-label">Kepala Program (Opsional)</label>
-                <select name="id_kaprog" class="form-control">
+                <select name="id_kaprog" id="id_kaprog" class="form-control">
                     <option value="">-- Pilih Guru --</option>
                     <?php foreach ($guru_list as $g): ?>
                     <option value="<?= $g['id_guru'] ?>" <?= old('id_kaprog', $jurusan['id_kaprog']) == $g['id_guru'] ? 'selected' : '' ?> <?= in_array($g['id_guru'], $used_kaprog_ids ?? [], true) && (string) $jurusan['id_kaprog'] !== (string) $g['id_guru'] ? 'disabled' : '' ?>>
@@ -56,6 +56,23 @@
         </form>
     </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#id_kaprog', {
+        create: false,
+        allowEmptyOption: true,
+        placeholder: '-- Pilih Guru --',
+        maxOptions: 100,
+        sortField: {
+            field: 'text',
+            direction: 'asc'
+        },
+        dropdownParent: 'body',
+    });
+});
+</script>
 
 <?php
 $content = ob_get_clean();
