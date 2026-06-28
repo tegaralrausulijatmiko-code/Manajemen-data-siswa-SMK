@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\GuruModel;
+use App\Models\JurusanModel;
 use App\Models\KelasModel;
 use App\Models\MapelModel;
 
@@ -10,124 +10,118 @@ class Mapel extends BaseController
 {
     protected MapelModel $model;
     protected KelasModel $kelasModel;
-    protected GuruModel $guruModel;
+    protected JurusanModel $jurusanModel;
 
     public function __construct()
     {
-        $this->model      = new MapelModel();
-        $this->kelasModel = new KelasModel();
-        $this->guruModel  = new GuruModel();
+        $this->model        = new MapelModel();
+        $this->kelasModel   = new KelasModel();
+        $this->jurusanModel = new JurusanModel();
     }
 
     public function index()
     {
-        $keyword       = $this->request->getGet('q');
-        $filter_status = $this->request->getGet('status');
+        $keyword = $this->request->getGet('q');
 
-        $paged = $this->paginateArray($this->model->getAll($keyword, $filter_status), 10);
+        $paged = $this->paginateArray($this->model->getAll($keyword), 10);
 
         return view('MasterMapel/master-data-mapel', [
-            'mapel'         => $paged['items'],
-            'keyword'       => $keyword,
-            'filter_status' => $filter_status,
-            'pagination'    => $paged['pagination'],
+            'mapel'      => $paged['items'],
+            'keyword'    => $keyword,
+            'pagination' => $paged['pagination'],
         ]);
     }
 
     public function tambah()
     {
         return view('MasterMapel/input-mapel', [
-            'next_kode'  => $this->model->getNextKodeMapel(),
-            'guru_list'  => $this->guruModel->findAll(),
-            'nama_mapel'   => $this->request->getPost('nama_mapel'),
-            'status'     => $this->request->getPost('status'),
+            'jurusan_list' => $this->jurusanModel->findAll(),
         ]);
     }
 
     public function simpan()
     {
         $rules = [
-            'kode_mapel' => 'required|max_length[10]|is_unique[tbl_mata_pelajaran.kode_mapel]',
-            'nama_mapel' => 'required|max_length[100]',
-            'tingkat'   => 'required|in_list[X,XI,XII]',
-            'id_guru'    => 'required|integer',
-            'status'     => 'required|in_list[Produktif,Non Produktif]',
+            'nama_mapel' => 'required|max_length[150]',
+            'tingkat'    => 'required|in_list[X,XI,XII]',
+            'id_jurusan' => 'permit_empty|integer',
         ];
 
         if (! $this->validate($rules)) {
             return view('MasterMapel/input-mapel', [
-                'errors'     => $this->validator->getErrors(),
-                'nama_mapel'   => $this->request->getPost('nama_mapel'),
-                'tingkat'    => $this->request->getPost('tingkat'),
-                'guru_list'  => $this->guruModel->findAll(),
-                'next_kode'  => $this->model->getNextKodeMapel(),
-                'status'     => $this->request->getPost('status'),
+                'errors'        => $this->validator->getErrors(),
+                'jurusan_list'  => $this->jurusanModel->findAll(),
             ]);
         }
 
-        $kodeMapel = $this->request->getPost('kode_mapel') ?: $this->model->getNextKodeMapel();
+        $jenis = empty($this->request->getPost('id_jurusan'))
+        ? 'Umum'
+        : 'Kejuruan';
 
         $this->model->insert([
-            'kode_mapel' => $kodeMapel,
             'nama_mapel' => $this->request->getPost('nama_mapel'),
             'tingkat'    => $this->request->getPost('tingkat'),
-            'id_guru'    => $this->request->getPost('id_guru'),
-            'status'     => $this->request->getPost('status'),
+            'jenis'      => $jenis,
+            'id_jurusan' => $this->request->getPost('id_jurusan') ?: null,
         ]);
 
-        return redirect()->to(base_url('mapel'))->with('success', 'Mata pelajaran berhasil ditambahkan.');
+        return redirect()->to(base_url('mapel'))
+            ->with('success', 'Mata pelajaran berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
         $mapel = $this->model->find($id);
+
         if (! $mapel) {
-            return redirect()->to(base_url('mapel'))->with('error', 'Data tidak ditemukan.');
+            return redirect()->to(base_url('mapel'))
+                ->with('error', 'Data tidak ditemukan.');
         }
 
         return view('MasterMapel/edit-mapel', [
-            'mapel'      => $mapel,
-            'tingkat'    => $this->request->getPost('tingkat'),
-            'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
-            'guru_list'  => $this->guruModel->findAll(),
+            'mapel'         => $mapel,
+            'jurusan_list'  => $this->jurusanModel->findAll(),
         ]);
     }
 
     public function update($id)
     {
         $rules = [
-            'kode_mapel' => "required|max_length[10]|is_unique[tbl_mata_pelajaran.kode_mapel,id_mapel,$id]",
-            'nama_mapel' => 'required|max_length[100]',
-            'tingkat'   => 'required|in_list[X,XI,XII]',
-            'id_guru'    => 'required|integer',
-            'status'     => 'required|in_list[Produktif,Non Produktif]',
+            'nama_mapel' => 'required|max_length[150]',
+            'tingkat'    => 'required|in_list[X,XI,XII]',
+            'id_jurusan' => 'permit_empty|integer',
+
         ];
 
         if (! $this->validate($rules)) {
-            $mapel = $this->model->find($id);
             return view('MasterMapel/edit-mapel', [
-                'mapel'      => $mapel,
-                'errors'     => $this->validator->getErrors(),
-                'tingkat'    => $this->request->getPost('tingkat'),
-                'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
-                'guru_list'  => $this->guruModel->findAll(),
+                'mapel'         => $this->model->find($id),
+                'errors'        => $this->validator->getErrors(),
+                'jurusan_list'  => $this->jurusanModel->findAll(),
             ]);
         }
 
+        $jenis = empty($this->request->getPost('id_jurusan'))
+        ? 'Umum'
+        : 'Kejuruan';
+
+
         $this->model->update($id, [
-            'kode_mapel' => $this->request->getPost('kode_mapel'),
             'nama_mapel' => $this->request->getPost('nama_mapel'),
-            'tingkat'   => $this->request->getPost('tingkat'),
-            'id_guru'    => $this->request->getPost('id_guru'),
-            'status'     => $this->request->getPost('status'),
+            'tingkat'    => $this->request->getPost('tingkat'),
+            'jenis'      => $jenis,
+            'id_jurusan' => $this->request->getPost('id_jurusan') ?: null,
         ]);
 
-        return redirect()->to(base_url('mapel'))->with('success', 'Mata pelajaran berhasil diperbarui.');
+        return redirect()->to(base_url('mapel'))
+            ->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
 
     public function hapus($id)
     {
         $this->model->delete($id);
-        return redirect()->to(base_url('mapel'))->with('success', 'Mata pelajaran berhasil dihapus.');
+
+        return redirect()->to(base_url('mapel'))
+            ->with('success', 'Mata pelajaran berhasil dihapus.');
     }
 }
