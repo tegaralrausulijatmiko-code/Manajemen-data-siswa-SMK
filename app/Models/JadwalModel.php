@@ -18,7 +18,7 @@ class JadwalModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    public function getAll(?string $keyword = null, ?string $id_kelas = null, ?string $id_guru = null): array
+    public function getAll(?string $keyword = null, $id_kelas = null, $id_guru = null): array
     {
         $builder = $this->db->table('tbl_jadwal jd')
             ->select('jd.*, k.nama_kelas, m.nama_mapel, g.nama_guru')
@@ -35,11 +35,19 @@ class JadwalModel extends Model
         }
 
         if ($id_kelas) {
-            $builder->where('jd.id_kelas', $id_kelas);
+            if (is_numeric($id_kelas)) {
+                $builder->where('jd.id_kelas', $id_kelas);
+            } else {
+                $builder->where('k.nama_kelas', $id_kelas);
+            }
         }
 
         if ($id_guru) {
-            $builder->where('jd.id_guru', $id_guru);
+            if (is_numeric($id_guru)) {
+                $builder->where('jd.id_guru', $id_guru);
+            } else {
+                $builder->where('g.nama_guru', $id_guru);
+            }
         }
 
         return $builder
@@ -58,6 +66,18 @@ class JadwalModel extends Model
             ->where('jd.id_guru', $idGuru)
             ->groupBy('k.id_kelas, k.nama_kelas, j.kode_jurusan, j.nama_jurusan')
             ->orderBy('k.nama_kelas')
+            ->get()
+            ->getResultArray();
+    }
+
+    public function getGuruByKelas(int $idKelas): array
+    {
+        return $this->db->table('tbl_jadwal jd')
+            ->select('g.id_guru, g.nama_guru')
+            ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left')
+            ->where('jd.id_kelas', $idKelas)
+            ->groupBy('g.id_guru, g.nama_guru')
+            ->orderBy('g.nama_guru', 'ASC')
             ->get()
             ->getResultArray();
     }

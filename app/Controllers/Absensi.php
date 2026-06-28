@@ -22,28 +22,38 @@ class Absensi extends BaseController
         $this->kelasModel  = new KelasModel();
     }
 
-    // =========================================================================
+       // =========================================================================
     // ADMIN — Absensi Jadwal Mapel
     // =========================================================================
     public function indexMapel()
     {
         $tanggal = $this->request->getGet('tanggal') ?: date('Y-m-d');
-        $kelas   = $this->request->getGet('kelas');
-        $guru    = $this->request->getGet('guru');
+        $idKelas = $this->request->getGet('kelas');
+        $idGuru  = $this->request->getGet('guru');
 
         $jadwalList = $this->jadwalModel->getAll(
-            $kelas ?: null,
             null,
-            $guru ?: null
+            $idKelas ?: null,
+            $idGuru ?: null
         );
+
+        $kelas_list = $this->kelasModel->getKelasWithJurusan();
+        if ($idGuru) {
+            $kelas_list = $this->jadwalModel->getKelasByGuru((int) $idGuru);
+        }
+
+        $guru_list = $this->jadwalModel->getGuruList();
+        if ($idKelas) {
+            $guru_list = $this->jadwalModel->getGuruByKelas((int) $idKelas);
+        }
 
         return view('MasterAbsensi/absensi-mapel', [
             'jadwal_list'   => $jadwalList,
-            'kelas_list'    => $this->kelasModel->getKelasWithJurusan(),
-            'guru_list'     => $this->jadwalModel->getGuruList(),
+            'kelas_list'    => $kelas_list,
+            'guru_list'     => $guru_list,
             'tanggal'       => $tanggal,
-            'filter_kelas'  => $kelas,
-            'filter_guru'   => $guru,
+            'filter_kelas'  => $idKelas,
+            'filter_guru'   => $idGuru,
         ]);
     }
 
@@ -298,7 +308,7 @@ class Absensi extends BaseController
     // GURU — Dashboard (pilihan: absen mapel atau absen harian wali kelas)
     // =========================================================================
 
-    public function guruIndex()
+     public function guruIndex()
     {
         $idGuru = $this->getGuruId();
         if (! $idGuru) {
@@ -306,16 +316,23 @@ class Absensi extends BaseController
         }
 
         $tanggal    = $this->request->getGet('tanggal') ?: date('Y-m-d');
-        $jadwalList = $this->jadwalModel->getAll(null, null, (string) $idGuru);
+        
+        $days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $hariIni = $days[date('w', strtotime($tanggal))];
 
-        // Kelas yang diampu guru ini sebagai wali kelas
+        $allJadwal = $this->jadwalModel->getAll(null, null, (string) $idGuru);
+        
+        $jadwalList = array_filter($allJadwal, function($j) use ($hariIni) {
+            return $j['hari'] === $hariIni;
+        });
+
         $kelasWali  = $this->kelasModel->getKelasWaliByGuru($idGuru);
 
         return view('GuruAbsensi/index', [
             'jadwal_list' => $jadwalList,
             'kelas_wali'  => $kelasWali,
             'tanggal'     => $tanggal,
-            'hari_ini'    => date('Y-m-d'),
+            'hari_ini'    => $hariIni, // Kirim data hari ini ke View
         ]);
     }
 

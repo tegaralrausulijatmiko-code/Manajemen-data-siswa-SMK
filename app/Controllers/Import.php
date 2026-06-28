@@ -141,7 +141,7 @@ class Import extends BaseController
         return $this->redirectWithResult('jurusan', $ok, $skip, $errors, $errorList);
     }
 
-    // ─── Import Kelas ─────────────────────────────────────────────────────────
+     // ─── Import Kelas ─────────────────────────────────────────────────────────
 
     public function kelas()
     {
@@ -153,38 +153,64 @@ class Import extends BaseController
         $rows         = $this->readSpreadsheet($file);
         $kelasModel   = new KelasModel();
         $jurusanModel = new JurusanModel();
+        $guruModel    = new GuruModel(); 
         $ok = $skip = $errors = 0;
         $errorList = [];
 
-        // cache jurusan kode → id
         $jurusanMap = [];
         foreach ($jurusanModel->findAll() as $j) {
-            $jurusanMap[strtoupper($j['kode_jurusan'])] = $j;
+
+            $key = preg_replace('/\s+/', '', strtolower(trim($j['nama_jurusan'])));
+            $jurusanMap[$key] = $j;
+        }
+ 
+        $guruMap = [];
+        foreach ($guruModel->findAll() as $g) {
+            $key = preg_replace('/\s+/', '', strtolower(trim($g['nama_guru'])));
+            $guruMap[$key] = $g['id_guru'];
         }
 
         foreach ($rows as $i => $row) {
-            $rowNum     = $i + 2;
-            $tingkat    = strtoupper(trim((string) ($row[0] ?? '')));
-            $kodeJurusan= strtoupper(trim((string) ($row[1] ?? '')));
-            $nomorKelas = trim((string) ($row[2] ?? ''));
+            $rowNum = $i + 2; // Data dimulai dari baris ke-2
 
-            if ($tingkat === '' && $kodeJurusan === '' && $nomorKelas === '') { $skip++; continue; }
+            $namaKelas   = trim((string) ($row[1] ?? ''));
+            $namaJurusan = trim((string) ($row[2] ?? ''));
+            $tingkat     = strtoupper(trim((string) ($row[3] ?? '')));
+            $namaWali    = trim((string) ($row[4] ?? ''));
 
+            if ($namaKelas === '' && $namaJurusan === '' && $tingkat === '') { $skip++; continue; }
+
+            if ($namaKelas === '') {
+                $errorList[] = "Baris $rowNum: Nama Kelas tidak boleh kosong.";
+                $errors++; continue;
+            }
+            
             if (! in_array($tingkat, ['X', 'XI', 'XII'])) {
                 $errorList[] = "Baris $rowNum: Tingkat '$tingkat' harus X, XI, atau XII.";
                 $errors++; continue;
             }
-            if (! isset($jurusanMap[$kodeJurusan])) {
-                $errorList[] = "Baris $rowNum: Kode jurusan '$kodeJurusan' tidak ditemukan.";
+            
+            $jurusanKey = preg_replace('/\s+/', '', strtolower($namaJurusan));
+            if (! isset($jurusanMap[$jurusanKey])) {
+                $errorList[] = "Baris $rowNum: Nama Jurusan '$namaJurusan' tidak ditemukan di database.";
                 $errors++; continue;
             }
-            if (! is_numeric($nomorKelas) || (int) $nomorKelas < 1) {
-                $errorList[] = "Baris $rowNum: Nomor kelas '$nomorKelas' harus angka positif.";
-                $errors++; continue;
+            $jurusan = $jurusanMap[$jurusanKey];
+
+            $idWaliKelas = null;
+            if ($namaWali !== '') {
+                $waliKey = preg_replace('/\s+/', '', strtolower($namaWali));
+                if (! isset($guruMap[$waliKey])) {
+                    $errorList[] = "Baris $rowNum: Nama Wali Kelas '$namaWali' tidak ditemukan di data guru.";
+                    $errors++; continue;
+                }
+                $idWaliKelas = $guruMap[$waliKey];
             }
 
-            $jurusan   = $jurusanMap[$kodeJurusan];
-            $namaKelas = "$tingkat {$jurusan['kode_jurusan']} $nomorKelas";
+            $nomorKelas = 1;
+            if (preg_match('/\s(\d+)$/', $namaKelas, $matches)) {
+                $nomorKelas = (int) $matches[1];
+            }
 
             if ($kelasModel->isNamaKelasTaken($namaKelas)) {
                 $errorList[] = "Baris $rowNum: Kelas '$namaKelas' sudah ada, dilewati.";
@@ -194,16 +220,15 @@ class Import extends BaseController
             $kelasModel->insert([
                 'id_jurusan'    => $jurusan['id_jurusan'],
                 'tingkat'       => $tingkat,
-                'nomor_kelas'   => (int) $nomorKelas,
+                'nomor_kelas'   => $nomorKelas,
                 'nama_kelas'    => $namaKelas,
-                'id_wali_kelas' => null,
+                'id_wali_kelas' => $idWaliKelas,
             ]);
             $ok++;
         }
 
         return $this->redirectWithResult('kelas', $ok, $skip, $errors, $errorList);
     }
-
     // ─── Import Siswa ─────────────────────────────────────────────────────────
 
     public function siswa()
