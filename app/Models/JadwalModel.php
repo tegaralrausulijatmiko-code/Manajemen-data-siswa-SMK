@@ -21,7 +21,7 @@ class JadwalModel extends Model
     public function getAll(?string $keyword = null, ?string $id_kelas = null, ?string $id_guru = null): array
     {
         $builder = $this->db->table('tbl_jadwal jd')
-            ->select('jd.*, k.nama_kelas, m.nama_mapel, g.nama_guru')
+            ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
             ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
             ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
             ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left');
@@ -65,7 +65,7 @@ class JadwalModel extends Model
     public function getDetailForGuru(int $idJadwal, int $idGuru): ?array
     {
         return $this->db->table('tbl_jadwal jd')
-            ->select('jd.*, k.nama_kelas, m.nama_mapel, g.nama_guru')
+            ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
             ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
             ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
             ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left')
@@ -78,7 +78,7 @@ class JadwalModel extends Model
     public function getDetail(int $id): ?array
     {
         return $this->db->table('tbl_jadwal jd')
-            ->select('jd.*, k.nama_kelas, m.nama_mapel, g.nama_guru')
+            ->select('jd.*, k.nama_kelas, m.nama_mapel, m.kode_mapel, g.nama_guru')
             ->join('tbl_kelas k', 'k.id_kelas = jd.id_kelas', 'left')
             ->join('tbl_mata_pelajaran m', 'm.id_mapel = jd.id_mapel', 'left')
             ->join('tbl_guru g', 'g.id_guru = jd.id_guru', 'left')

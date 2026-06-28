@@ -200,6 +200,7 @@ INSERT INTO `tbl_kelas` (`id_kelas`, `id_jurusan`, `nama_kelas`, `tingkat`, `id_
 
 CREATE TABLE `tbl_mata_pelajaran` (
   `id_mapel` int(11) NOT NULL,
+  `kode_mapel` varchar(10) NOT NULL,
   `nama_mapel` varchar(100) NOT NULL,
   `status` enum('Produktif','Non Produktif') NOT NULL DEFAULT 'Non Produktif',
   `tingkat` enum('X','XI','XII') NOT NULL DEFAULT 'X',
@@ -212,7 +213,7 @@ CREATE TABLE `tbl_mata_pelajaran` (
 -- Dumping data untuk tabel `tbl_mata_pelajaran`
 --
 
-INSERT INTO `tbl_mata_pelajaran` (`id_mapel`, `nama_mapel`, `status`, `tingkat`, `id_guru`, `created_at`, `updated_at`) VALUES
+INSERT INTO `tbl_mata_pelajaran` (`id_mapel`, `kode_mapel`, `nama_mapel`, `status`, `tingkat`, `id_guru`, `created_at`, `updated_at`) VALUES
 (6, '177', 'Pemrograman Web', 'Produktif', 'X', 1975, '2026-06-09 05:19:17', '2026-06-23 05:59:13'),
 (11, '158', 'Matematika', 'Non Produktif', 'X', 1872, '2026-06-23 11:44:50', '2026-06-23 11:44:50'),
 (12, '156', 'Desain Grafis', 'Produktif', 'X', 1980, '2026-06-23 11:45:03', '2026-06-23 11:45:03'),
@@ -331,6 +332,7 @@ ALTER TABLE `tbl_kelas`
 --
 ALTER TABLE `tbl_mata_pelajaran`
   ADD PRIMARY KEY (`id_mapel`),
+  ADD UNIQUE KEY `uq_kode_mapel` (`kode_mapel`);
 
 --
 -- Indeks untuk tabel `tbl_siswa`

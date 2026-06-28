@@ -14,9 +14,14 @@
     <div class="card-header">
         <div class="card-title">Daftar Mata Pelajaran</div>
         <form method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <select name="status" class="form-control" style="width:160px; padding:8px 10px; font-size:0.9rem;" onchange="this.form.submit()">
+                <option value="">Semua Status</option>
+                <option value="Produktif"     <?= ($filter_status??'') == 'Produktif'     ? 'selected':'' ?>>Produktif</option>
+                <option value="Non Produktif" <?= ($filter_status??'') == 'Non Produktif' ? 'selected':'' ?>>Non Produktif</option>
+            </select>
             <div class="search-box">
                 <i class="ri-search-line"></i>
-                <input type="text" name="q" placeholder="Cari mapel..." value="<?= esc($keyword ?? '') ?>">
+                <input type="text" name="q" placeholder="Cari mapel / guru..." value="<?= esc($keyword ?? '') ?>">
             </div>
         </form>
     </div>
@@ -25,31 +30,35 @@
             <thead>
                 <tr>
                     <th width="50">No</th>
-                    <th>Nama Mapel</th>
+                    <th>Kode</th>
+                    <th>Nama Mata Pelajaran</th>
                     <th>Tingkat</th>
-                    <th>Jurusan</th>
-                    <th>Jenis</th>
+                    <th>Guru</th>
+                    <th>Status</th>
                     <th width="130">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($mapel)): ?>
                 <tr>
-                    <td colspan="6">
-                        <div class="empty-state">
-                            <i class="ri-book-read-line"></i>
-                            <p>Tidak ada data mata pelajaran</p>
-                        </div>
-                    </td>
-                </tr>
+                    <div class="empty-state">
+                        <i class="ri-book-read-line"></i>
+                        <p>Tidak ada data mata pelajaran</p>
+                    </div>
+                </td></tr>
                 <?php else: ?>
                 <?php foreach ($mapel as $i => $m): ?>
                 <tr>
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
+                    <td><strong><?= esc($m['kode_mapel']) ?></strong></td>
                     <td><?= esc($m['nama_mapel']) ?></td>
                     <td><span class="badge <?= $m['tingkat'] === 'X' ? 'badge-l' : ($m['tingkat'] === 'XI' ? 'badge-aktif' : ($m['tingkat'] === 'XII' ? 'badge-p' : 'badge-nonaktif')) ?>"><?= esc($m['tingkat']) ?></span></td>
-                    <td><?= esc($m['nama_jurusan'] ?? '-') ?></td>
-                    <td><span class="badge <?= $m['jenis'] === 'Umum' ? 'badge-aktif' : 'badge-p' ?>"><?= esc($m['jenis']) ?></span></td>
+                    <td><?= esc($m['nama_guru']) ?></td>
+                    <td>
+                        <span class="badge <?= $m['status'] == 'Produktif' ? 'badge-prod' : 'badge-non-prod' ?>">
+                            <?= esc($m['status']) ?>
+                        </span>
+                    </td>
                     <td>
                         <a href="<?= base_url('mapel/edit/' . $m['id_mapel']) ?>" class="btn btn-edit btn-sm">
                             <i class="ri-edit-line"></i> Edit
