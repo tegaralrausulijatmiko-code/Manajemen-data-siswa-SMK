@@ -57,6 +57,18 @@ class Mapel extends BaseController
             ]);
         }
 
+        // Cek apakah nama mapel sudah ada
+        $namaMapel = trim($this->request->getPost('nama_mapel'));
+
+        $exists = $this->model
+            ->where('LOWER(nama_mapel)', strtolower($namaMapel))
+            ->first();
+
+        if ($exists) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Mata pelajaran "' . $namaMapel . '" sudah ada.');
+        }
 
         $this->model->insert([
             'nama_mapel' => $this->request->getPost('nama_mapel'),
@@ -98,6 +110,19 @@ class Mapel extends BaseController
             'nama_mapel' => $this->request->getPost('nama_mapel'),
             'status'     => $this->request->getPost('status'),
         ]);
+
+        $namaMapel = trim($this->request->getPost('nama_mapel'));
+
+        $exists = $this->model
+            ->where('LOWER(nama_mapel)', strtolower($namaMapel))
+            ->where('id_mapel !=', $id)
+            ->first();
+
+        if ($exists) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Mata pelajaran "' . $namaMapel . '" sudah ada.');
+        }
 
         return redirect()->to(base_url('mapel'))->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
