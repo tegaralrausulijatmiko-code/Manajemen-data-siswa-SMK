@@ -186,7 +186,11 @@ class Kelas extends BaseController
 
     public function hapus($id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('kelas'))->with('success', 'Kelas berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_kelas',
+            $id,
+            base_url('kelas'),
+            'Kelas berhasil dihapus.'
+        );
     }
 }

@@ -140,7 +140,11 @@ class Guru extends BaseController
 
     public function hapus($id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('guru'))->with('success', 'Guru berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_guru',
+            $id,
+            base_url('guru'),
+            'Guru berhasil dihapus.'
+        );
     }
 }

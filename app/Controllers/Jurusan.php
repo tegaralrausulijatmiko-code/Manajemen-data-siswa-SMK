@@ -125,7 +125,11 @@ class Jurusan extends BaseController
 
     public function hapus($id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('jurusan'))->with('success', 'Jurusan berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_jurusan',
+            $id,
+            base_url('jurusan'),
+            'Jurusan berhasil dihapus.'
+        );
     }
 }

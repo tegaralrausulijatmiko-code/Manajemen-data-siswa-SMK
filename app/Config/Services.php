@@ -29,4 +29,13 @@ class Services extends BaseService
      *     return new \CodeIgniter\Example();
      * }
      */
+
+    public static function foreignKeyChecker(bool $getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('foreignKeyChecker');
+        }
+
+        return new \App\Libraries\ForeignKeyChecker();
+    }
 }

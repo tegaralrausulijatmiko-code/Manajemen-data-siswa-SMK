@@ -236,7 +236,11 @@ class User extends BaseController
 
     public function hapus($id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('user'))->with('success', 'User berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_users',
+            $id,
+            base_url('user'),
+            'User berhasil dihapus.'
+        );
     }
 }

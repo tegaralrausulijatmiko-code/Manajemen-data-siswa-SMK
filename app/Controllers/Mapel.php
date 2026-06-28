@@ -104,7 +104,11 @@ class Mapel extends BaseController
 
     public function hapus($id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('mapel'))->with('success', 'Mata pelajaran berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_mata_pelajaran',
+            $id,
+            base_url('mapel'),
+            'Mata pelajaran berhasil dihapus.'
+        );
     }
 }

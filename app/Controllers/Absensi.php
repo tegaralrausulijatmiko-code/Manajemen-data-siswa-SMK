@@ -285,8 +285,12 @@ class Absensi extends BaseController
 
     public function hapus(int $id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('absensi'))->with('success', 'Absensi berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_absensi',
+            $id,
+            base_url('absensi'),
+            'Absensi berhasil dihapus.'
+        );
     }
 
 

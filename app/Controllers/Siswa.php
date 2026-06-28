@@ -175,21 +175,29 @@ class Siswa extends BaseController
 
     public function hapus($id)
     {
-        $redirectKelas = $this->request->getGet('redirect_to'); 
-
-        $siswa = $this->model->find($id);
-        if ($siswa && ! empty($siswa['foto'])) {
-            $path = ROOTPATH . 'public/uploads/' . $siswa['foto'];
-            if (file_exists($path)) unlink($path);
-        }
-        $this->model->delete($id);
-
-        $this->kelasModel->syncJumlahSiswa($siswa['id_kelas']);
-
+        $redirectKelas = $this->request->getGet('redirect_to');
         $redirectUrl = $redirectKelas
             ? base_url('kelas/show/' . $redirectKelas)
             : base_url('siswa');
 
-        return redirect()->to($redirectUrl)->with('success', 'Siswa berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_siswa',
+            $id,
+            $redirectUrl,
+            'Siswa berhasil dihapus.',
+            function () use ($id) {
+                $siswa = $this->model->find($id);
+                if ($siswa) {
+                    if (! empty($siswa['foto'])) {
+                        $path = ROOTPATH . 'public/uploads/' . $siswa['foto'];
+                        if (file_exists($path)) {
+                            unlink($path);
+                        }
+                    }
+
+                    $this->kelasModel->syncJumlahSiswa($siswa['id_kelas']);
+                }
+            }
+        );
     }
 }

@@ -63,4 +63,23 @@ abstract class BaseController extends Controller
             ],
         ];
     }
+
+    protected function deleteEntityByTable(string $table, int|string $id, string $redirectUrl, string $successMessage, ?callable $beforeDelete = null)
+    {
+        $checker = service('foreignKeyChecker');
+
+        if ($checker->isReferenced($table, $id)) {
+            return redirect()->to($redirectUrl)
+                ->with('error', 'Data tidak dapat dihapus karena masih digunakan pada data lain.');
+        }
+
+        if ($beforeDelete) {
+            $beforeDelete();
+        }
+
+        $this->model->delete($id);
+
+        return redirect()->to($redirectUrl)
+            ->with('success', $successMessage);
+    }
 }

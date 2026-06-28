@@ -80,8 +80,12 @@ class Jadwal extends BaseController
 
     public function hapus($id)
     {
-        $this->model->delete($id);
-        return redirect()->to(base_url('jadwal'))->with('success', 'Jadwal berhasil dihapus.');
+        return $this->deleteEntityByTable(
+            'tbl_jadwal',
+            $id,
+            base_url('jadwal'),
+            'Jadwal berhasil dihapus.'
+        );
     }
 
     private function rules(): array
