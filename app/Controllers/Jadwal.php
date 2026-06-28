@@ -22,6 +22,28 @@ class Jadwal extends BaseController
         $this->guruModel  = new GuruModel();
     }
 
+    private function isBentrokKelas(
+        int $idKelas,
+        string $hari,
+        string $jamMulai,
+        string $jamSelesai,
+        ?int $ignoreId = null
+    ): bool {
+        $builder = $this->model
+            ->where('id_kelas', $idKelas)
+            ->where('hari', $hari)
+            ->groupStart()
+                ->where('jam_mulai <', $jamSelesai)
+                ->where('jam_selesai >', $jamMulai)
+            ->groupEnd();
+
+        if ($ignoreId !== null) {
+            $builder->where('id_jadwal !=', $ignoreId);
+        }
+
+        return $builder->countAllResults() > 0;
+    }
+
     public function index()
     {
         $keyword = $this->request->getGet('q');
@@ -51,6 +73,26 @@ class Jadwal extends BaseController
             ]));
         }
 
+        if ($this->isBentrokKelas(
+            (int)$this->request->getPost('id_kelas'),
+            $this->request->getPost('hari'),
+            $this->request->getPost('jam_mulai'),
+            $this->request->getPost('jam_selesai')
+        )) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Jadwal kelas tersebut bertabrakan dengan jadwal yang sudah ada.');
+        }
+
+        if (
+            strtotime($this->request->getPost('jam_mulai')) >=
+            strtotime($this->request->getPost('jam_selesai'))
+        ) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Jam selesai harus lebih besar dari jam mulai.');
+        }
+
         $this->model->insert($this->payload());
         return redirect()->to(base_url('jadwal'))->with('success', 'Jadwal berhasil ditambahkan.');
     }
@@ -72,6 +114,27 @@ class Jadwal extends BaseController
                 'jadwal' => $this->model->find($id),
                 'errors' => $this->validator->getErrors(),
             ]));
+        }
+
+        if ($this->isBentrokKelas(
+            (int)$this->request->getPost('id_kelas'),
+            $this->request->getPost('hari'),
+            $this->request->getPost('jam_mulai'),
+            $this->request->getPost('jam_selesai'),
+            $id
+        )) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Jadwal kelas tersebut bertabrakan dengan jadwal yang sudah ada.');
+        }
+
+        if (
+            strtotime($this->request->getPost('jam_mulai')) >=
+            strtotime($this->request->getPost('jam_selesai'))
+        ) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Jam selesai harus lebih besar dari jam mulai.');
         }
 
         $this->model->update($id, $this->payload());
