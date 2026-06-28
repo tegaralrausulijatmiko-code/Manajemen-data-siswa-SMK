@@ -3,11 +3,18 @@
 <div class="page-header">
     <div>
         <h3>Kelola Mata Pelajaran</h3>
-        <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Mata Pelajaran</div>
+        <div class="breadcrumb">
+            <a href="<?= base_url('dashboard') ?>">Dashboard</a> / Mata Pelajaran
+        </div>
     </div>
-    <a href="<?= base_url('mapel/tambah') ?>" class="btn btn-primary btn-sm">
-        <i class="ri-add-line"></i> Tambah Mapel
-    </a>
+
+    <div class="page-header-actions">
+        <?= view('Template/partials/_modal_import', ['modul' => 'mapel']) ?>
+
+        <a href="<?= base_url('mapel/tambah') ?>" class="btn btn-primary btn-sm">
+            <i class="ri-add-line"></i> Tambah Mapel
+        </a>
+    </div>
 </div>
 
 <div class="card">

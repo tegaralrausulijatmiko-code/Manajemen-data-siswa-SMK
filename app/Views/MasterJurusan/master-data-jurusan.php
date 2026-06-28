@@ -3,11 +3,18 @@
 <div class="page-header">
     <div>
         <h3>Kelola Data Jurusan</h3>
-        <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Jurusan</div>
+        <div class="breadcrumb">
+            <a href="<?= base_url('dashboard') ?>">Dashboard</a> / Jurusan
+        </div>
     </div>
-    <a href="<?= base_url('jurusan/tambah') ?>" class="btn btn-primary btn-sm">
-        <i class="ri-add-line"></i> Tambah Jurusan
-    </a>
+
+    <div class="page-header-actions">
+        <?= view('Template/partials/_modal_import', ['modul' => 'jurusan']) ?>
+
+        <a href="<?= base_url('jurusan/tambah') ?>" class="btn btn-primary btn-sm">
+            <i class="ri-add-line"></i> Tambah Jurusan
+        </a>
+    </div>
 </div>
 
 <div class="card">

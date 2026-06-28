@@ -3,11 +3,18 @@
 <div class="page-header">
     <div>
         <h3>Kelola Data Kelas</h3>
-        <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Kelas</div>
+        <div class="breadcrumb">
+            <a href="<?= base_url('dashboard') ?>">Dashboard</a> / Kelas
+        </div>
     </div>
-    <a href="<?= base_url('kelas/tambah') ?>" class="btn btn-primary btn-sm">
-        <i class="ri-add-line"></i> Tambah Kelas
-    </a>
+
+    <div class="page-header-actions">
+        <?= view('Template/partials/_modal_import', ['modul' => 'kelas']) ?>
+
+        <a href="<?= base_url('kelas/tambah') ?>" class="btn btn-primary btn-sm">
+            <i class="ri-add-line"></i> Tambah Kelas
+        </a>
+    </div>
 </div>
 
 <div class="card">

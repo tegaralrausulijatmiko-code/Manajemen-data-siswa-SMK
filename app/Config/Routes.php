@@ -104,5 +104,16 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->post('user/toggle-status/(:num)', 'User::toggleStatus/$1');
         $routes->post('user/reset-password/(:num)','User::resetPassword/$1');
         $routes->post('user/hapus/(:num)', 'User::hapus/$1');
+
+        // ── Import Routes ────────────────────────────────────────────────────────────
+        $routes->get('import/template/(:segment)',  'Import::template/$1');
+        
+        $routes->post('import/guru',    'Import::guru');
+        $routes->post('import/jurusan', 'Import::jurusan');
+        $routes->post('import/kelas',   'Import::kelas');
+        $routes->post('import/siswa',   'Import::siswa');
+        $routes->post('import/mapel',   'Import::mapel');
+        $routes->post('import/jadwal',  'Import::jadwal');
+        
     });
 });

@@ -3,11 +3,18 @@
 <div class="page-header">
     <div>
         <h3>Kelola Data Guru</h3>
-        <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Guru</div>
+        <div class="breadcrumb">
+            <a href="<?= base_url('dashboard') ?>">Dashboard</a> / Guru
+        </div>
     </div>
-    <a href="<?= base_url('guru/tambah') ?>" class="btn btn-primary btn-sm">
-        <i class="ri-add-line"></i> Tambah Guru
-    </a>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+        <?= view('Template/partials/_modal_import', ['modul' => 'guru']) ?>
+
+        <a href="<?= base_url('guru/tambah') ?>" class="btn btn-primary btn-sm">
+            <i class="ri-add-line"></i> Tambah Guru
+        </a>
+    </div>
 </div>
 
 <div class="card">

@@ -3,9 +3,18 @@
 <div class="page-header">
     <div>
         <h3>Kelola Jadwal Pelajaran</h3>
-        <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / Jadwal</div>
+        <div class="breadcrumb">
+            <a href="<?= base_url('dashboard') ?>">Dashboard</a> / Jadwal
+        </div>
     </div>
-    <a href="<?= base_url('jadwal/tambah') ?>" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> Tambah Jadwal</a>
+
+    <div class="page-header-actions">
+        <?= view('Template/partials/_modal_import', ['modul' => 'jadwal']) ?>
+
+        <a href="<?= base_url('jadwal/tambah') ?>" class="btn btn-primary btn-sm">
+            <i class="ri-add-line"></i> Tambah Jadwal
+        </a>
+    </div>
 </div>
 
 <div class="card">
