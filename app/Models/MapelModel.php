@@ -11,7 +11,7 @@ class MapelModel extends Model
     protected $returnType = 'array';
 
     protected $allowedFields = [
-        'kode_mapel', 'nama_mapel', 'status', 'tingkat', 'id_guru',
+        'nama_mapel', 'status', 'id_guru',
     ];
 
     protected $useTimestamps = true;
@@ -21,14 +21,12 @@ class MapelModel extends Model
     public function getAll(?string $keyword = null, ?string $status = null): array
     {
         $builder = $this->db->table('tbl_mata_pelajaran m')
-            ->select('m.*, m.tingkat, g.nama_guru')
+            ->select('m.*, g.nama_guru')
             ->join('tbl_guru g', 'g.id_guru = m.id_guru', 'left');
 
         if ($keyword) {
             $builder->groupStart()
                 ->like('m.nama_mapel', $keyword)
-                ->orLike('m.kode_mapel', $keyword)
-                ->orLike('m.tingkat', $keyword)
                 ->orLike('g.nama_guru', $keyword)
             ->groupEnd();
         }
@@ -37,23 +35,7 @@ class MapelModel extends Model
             $builder->where('m.status', $status);
         }
 
-        return $builder->orderBy('m.kode_mapel')->get()->getResultArray();
+        return $builder->get()->getResultArray();
     }
 
-    public function getNextKodeMapel(): string
-    {
-        $attempt = 0;
-
-        do {
-            $attempt++;
-            $kode = (string) random_int(120, 199);
-            $exists = $this->where('kode_mapel', $kode)->countAllResults();
-
-            if ($attempt >= 10) {
-                break;
-            }
-        } while ($exists > 0);
-
-        return $kode;
-    }
 }

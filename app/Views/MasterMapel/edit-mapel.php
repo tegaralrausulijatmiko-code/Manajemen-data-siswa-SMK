@@ -18,46 +18,30 @@
         <form method="post" action="<?= base_url('mapel/update/' . $mapel['id_mapel']) ?>">
             <?= csrf_field() ?>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Kode Mapel <span class="required">*</span></label>
-                    <input type="text" name="kode_mapel" class="form-control" value="<?= esc($mapel['kode_mapel']) ?>" required maxlength="10">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Status <span class="required">*</span></label>
-                    <select name="status" class="form-control" required>
-                        <option value="Non Produktif" <?= $mapel['status'] == 'Non Produktif' ? 'selected':'' ?>>Non Produktif</option>
-                        <option value="Produktif"     <?= $mapel['status'] == 'Produktif'     ? 'selected':'' ?>>Produktif</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                <label class="form-label">Tingkat <span class="required">*</span></label>
-                    <select name="tingkat" class="form-control" required>
-                        <option value="">-- Pilih --</option>
-                        <?php foreach (['X','XI','XII'] as $t): ?>
-                        <option value="<?= $t ?>" <?= $mapel['tingkat'] == $t ? 'selected':'' ?>><?= $t ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Guru Pengampu <span class="required">*</span></label>
-                    <select name="id_guru" class="form-control" required>
-                        <option value="">-- Pilih Guru --</option>
-                        <?php foreach ($guru_list as $guru): ?>
-                            <option value="<?= $guru['id_guru'] ?>" <?= $mapel['id_guru'] == $guru['id_guru'] ? 'selected' : '' ?>>
-                                <?= esc($guru['nama_guru']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Nama Mata Pelajaran <span class="required">*</span></label>
                 <input type="text" name="nama_mapel" class="form-control" value="<?= esc($mapel['nama_mapel']) ?>" required maxlength="100">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Guru Pengampu <span class="required">*</span></label>
+                <select name="id_guru" class="form-control" required>
+                    <option value="">-- Pilih Guru --</option>
+                    <?php foreach ($guru_list as $guru): ?>
+                        <option value="<?= $guru['id_guru'] ?>" <?= $mapel['id_guru'] == $guru['id_guru'] ? 'selected' : '' ?>>
+                            <?= esc($guru['nama_guru']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Status <span class="required">*</span></label>
+                <select name="status" class="form-control" required>
+                    <option value="Umum" <?= $mapel['status'] == 'Umum' ? 'selected':'' ?>>Umum</option>
+                    <option value="Produktif"     <?= $mapel['status'] == 'Produktif'     ? 'selected':'' ?>>Produktif</option>
+                </select>
             </div>
 
             <div class="form-actions">

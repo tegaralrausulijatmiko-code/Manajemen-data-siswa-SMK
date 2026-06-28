@@ -17,7 +17,7 @@
             <select name="status" class="form-control" style="width:160px; padding:8px 10px; font-size:0.9rem;" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
                 <option value="Produktif"     <?= ($filter_status??'') == 'Produktif'     ? 'selected':'' ?>>Produktif</option>
-                <option value="Non Produktif" <?= ($filter_status??'') == 'Non Produktif' ? 'selected':'' ?>>Non Produktif</option>
+                <option value="Umum" <?= ($filter_status??'') == 'Umum' ? 'selected':'' ?>>Umum</option>
             </select>
             <div class="search-box">
                 <i class="ri-search-line"></i>
@@ -30,9 +30,7 @@
             <thead>
                 <tr>
                     <th width="50">No</th>
-                    <th>Kode</th>
-                    <th>Nama Mata Pelajaran</th>
-                    <th>Tingkat</th>
+                    <th>Mata Pelajaran</th>
                     <th>Guru</th>
                     <th>Status</th>
                     <th width="130">Aksi</th>
@@ -41,18 +39,18 @@
             <tbody>
                 <?php if (empty($mapel)): ?>
                 <tr>
-                    <div class="empty-state">
-                        <i class="ri-book-read-line"></i>
-                        <p>Tidak ada data mata pelajaran</p>
-                    </div>
-                </td></tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="ri-book-read-line"></i>
+                            <p>Tidak ada data mata pelajaran</p>
+                        </div>
+                    </td>
+                </tr>
                 <?php else: ?>
                 <?php foreach ($mapel as $i => $m): ?>
                 <tr>
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
-                    <td><strong><?= esc($m['kode_mapel']) ?></strong></td>
                     <td><?= esc($m['nama_mapel']) ?></td>
-                    <td><span class="badge <?= $m['tingkat'] === 'X' ? 'badge-l' : ($m['tingkat'] === 'XI' ? 'badge-aktif' : ($m['tingkat'] === 'XII' ? 'badge-p' : 'badge-nonaktif')) ?>"><?= esc($m['tingkat']) ?></span></td>
                     <td><?= esc($m['nama_guru']) ?></td>
                     <td>
                         <span class="badge <?= $m['status'] == 'Produktif' ? 'badge-prod' : 'badge-non-prod' ?>">
