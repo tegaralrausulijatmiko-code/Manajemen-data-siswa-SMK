@@ -445,7 +445,7 @@ class Import extends BaseController
                 $lineNum = 0;
                 while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                     $lineNum++;
-                    if ($lineNum <= 2) continue; // skip header + contoh
+                    if ($lineNum <= 1) continue; // skip header 
                     $rows[] = $data;
                 }
                 fclose($handle);
@@ -461,7 +461,7 @@ class Import extends BaseController
 
         foreach ($sheet->getRowIterator() as $row) {
             $rowNum++;
-            if ($rowNum <= 2) continue; // skip header + contoh
+            if ($rowNum <= 1) continue; // skip header
 
             $cells = [];
             foreach ($row->getCellIterator() as $cell) {
