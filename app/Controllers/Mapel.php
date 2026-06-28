@@ -19,6 +19,13 @@ class Mapel extends BaseController
         $this->guruModel  = new GuruModel();
     }
 
+    private function normalizeMapel(string $nama): string
+    {   
+        $nama = preg_replace('/\s+/', ' ', trim($nama));
+
+        return strtolower($nama);
+    }
+
     public function index()
     {
         $keyword       = $this->request->getGet('q');
@@ -58,11 +65,16 @@ class Mapel extends BaseController
         }
 
         // Cek apakah nama mapel sudah ada
-        $namaMapel = trim($this->request->getPost('nama_mapel'));
+        $namaMapel = preg_replace('/\s+/', ' ', trim($this->request->getPost('nama_mapel')));
 
-        $exists = $this->model
-            ->where('LOWER(nama_mapel)', strtolower($namaMapel))
-            ->first();
+        $exists = false;
+
+        foreach ($this->model->findAll() as $row) {
+            if ($this->normalizeMapel($row['nama_mapel']) === $this->normalizeMapel($namaMapel)) {
+                $exists = true;
+                break;
+            }
+        }
 
         if ($exists) {
             return redirect()->back()
@@ -71,7 +83,7 @@ class Mapel extends BaseController
         }
 
         $this->model->insert([
-            'nama_mapel' => $this->request->getPost('nama_mapel'),
+            'nama_mapel' => $namaMapel,
             'status'     => $this->request->getPost('status'),
         ]);
 
@@ -106,23 +118,23 @@ class Mapel extends BaseController
             ]);
         }
 
+        $namaMapel = preg_replace('/\s+/', ' ', trim($this->request->getPost('nama_mapel')));
+
+        foreach ($this->model->findAll() as $row) {
+            if (
+                $row['id_mapel'] != $id &&
+                $this->normalizeMapel($row['nama_mapel']) === $this->normalizeMapel($namaMapel)
+            ) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Mata pelajaran "' . $namaMapel . '" sudah ada.');
+            }
+        }
+
         $this->model->update($id, [
-            'nama_mapel' => $this->request->getPost('nama_mapel'),
+            'nama_mapel' => $namaMapel,
             'status'     => $this->request->getPost('status'),
         ]);
-
-        $namaMapel = trim($this->request->getPost('nama_mapel'));
-
-        $exists = $this->model
-            ->where('LOWER(nama_mapel)', strtolower($namaMapel))
-            ->where('id_mapel !=', $id)
-            ->first();
-
-        if ($exists) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Mata pelajaran "' . $namaMapel . '" sudah ada.');
-        }
 
         return redirect()->to(base_url('mapel'))->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
