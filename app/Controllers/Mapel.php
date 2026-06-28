@@ -37,7 +37,6 @@ class Mapel extends BaseController
     public function tambah()
     {
         return view('MasterMapel/input-mapel', [
-            'guru_list'  => $this->guruModel->findAll(),
             'nama_mapel'   => $this->request->getPost('nama_mapel'),
             'status'     => $this->request->getPost('status'),
         ]);
@@ -47,7 +46,6 @@ class Mapel extends BaseController
     {
         $rules = [
             'nama_mapel' => 'required|max_length[100]',
-            'id_guru'    => 'required|integer',
             'status'     => 'required|in_list[Produktif,Umum]',
         ];
 
@@ -55,7 +53,6 @@ class Mapel extends BaseController
             return view('MasterMapel/input-mapel', [
                 'errors'     => $this->validator->getErrors(),
                 'nama_mapel'   => $this->request->getPost('nama_mapel'),
-                'guru_list'  => $this->guruModel->findAll(),
                 'status'     => $this->request->getPost('status'),
             ]);
         }
@@ -63,7 +60,6 @@ class Mapel extends BaseController
 
         $this->model->insert([
             'nama_mapel' => $this->request->getPost('nama_mapel'),
-            'id_guru'    => $this->request->getPost('id_guru'),
             'status'     => $this->request->getPost('status'),
         ]);
 
@@ -80,7 +76,6 @@ class Mapel extends BaseController
         return view('MasterMapel/edit-mapel', [
             'mapel'      => $mapel,
             'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
-            'guru_list'  => $this->guruModel->findAll(),
         ]);
     }
 
@@ -88,7 +83,6 @@ class Mapel extends BaseController
     {
         $rules = [
             'nama_mapel' => 'required|max_length[100]',
-            'id_guru'    => 'required|integer',
             'status'     => 'required|in_list[Produktif,Umum]',
         ];
 
@@ -97,14 +91,11 @@ class Mapel extends BaseController
             return view('MasterMapel/edit-mapel', [
                 'mapel'      => $mapel,
                 'errors'     => $this->validator->getErrors(),
-                'kelas_list' => $this->kelasModel->getKelasWithJurusan(),
-                'guru_list'  => $this->guruModel->findAll(),
             ]);
         }
 
         $this->model->update($id, [
             'nama_mapel' => $this->request->getPost('nama_mapel'),
-            'id_guru'    => $this->request->getPost('id_guru'),
             'status'     => $this->request->getPost('status'),
         ]);
 

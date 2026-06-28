@@ -26,22 +26,6 @@
                 <?php endif; ?>
             </div>
 
-            
-            <div class="form-group">
-                <label class="form-label">Guru Pengampu <span class="required">*</span></label>
-                <select name="id_guru" class="form-control" required>
-                    <option value="">-- Pilih Guru --</option>
-                    <?php foreach ($guru_list as $guru): ?>
-                        <option value="<?= $guru['id_guru'] ?>" <?= old('id_guru') == $guru['id_guru'] ? 'selected' : '' ?>>
-                            <?= esc($guru['nama_guru']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <?php if (isset($errors['id_guru'])): ?>
-                    <small style="color:var(--danger);"><?= $errors['id_guru'] ?></small>
-                <?php endif; ?>
-            </div>
-
             <div class="form-group">
                 <label class="form-label">Status <span class="required">*</span></label>
                 <select name="status" class="form-control" required>

@@ -25,18 +25,6 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Guru Pengampu <span class="required">*</span></label>
-                <select name="id_guru" class="form-control" required>
-                    <option value="">-- Pilih Guru --</option>
-                    <?php foreach ($guru_list as $guru): ?>
-                        <option value="<?= $guru['id_guru'] ?>" <?= $mapel['id_guru'] == $guru['id_guru'] ? 'selected' : '' ?>>
-                            <?= esc($guru['nama_guru']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label class="form-label">Status <span class="required">*</span></label>
                 <select name="status" class="form-control" required>
                     <option value="Umum" <?= $mapel['status'] == 'Umum' ? 'selected':'' ?>>Umum</option>

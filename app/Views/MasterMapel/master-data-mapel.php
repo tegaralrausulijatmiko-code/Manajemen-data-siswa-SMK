@@ -31,7 +31,6 @@
                 <tr>
                     <th width="50">No</th>
                     <th>Mata Pelajaran</th>
-                    <th>Guru</th>
                     <th>Status</th>
                     <th width="130">Aksi</th>
                 </tr>
@@ -51,7 +50,6 @@
                 <tr>
                     <td><?= (($pagination['page'] ?? 1) - 1) * ($pagination['per_page'] ?? 10) + $i + 1 ?></td>
                     <td><?= esc($m['nama_mapel']) ?></td>
-                    <td><?= esc($m['nama_guru']) ?></td>
                     <td>
                         <span class="badge <?= $m['status'] == 'Produktif' ? 'badge-prod' : 'badge-non-prod' ?>">
                             <?= esc($m['status']) ?>
