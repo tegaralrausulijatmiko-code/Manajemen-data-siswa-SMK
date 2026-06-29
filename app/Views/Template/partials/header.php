@@ -9,7 +9,10 @@
         <div class="header-right">
             <strong><?= esc(session()->get('nama')) ?></strong><br>
             <span><?= esc(ucfirst(session()->get('role'))) ?></span>
-            <div style="margin-top:6px;">
+            <div style="margin-top:6px; display:flex; gap:8px; justify-content:flex-end;">
+                <a href="<?= base_url('profile') ?>" class="btn btn-primary btn-sm">
+                    <i class="ri-user-settings-line"></i> Profil
+                </a>
                 <a href="<?= base_url('logout') ?>" class="btn btn-secondary btn-sm">
                     <i class="ri-logout-circle-line"></i> Logout
                 </a>

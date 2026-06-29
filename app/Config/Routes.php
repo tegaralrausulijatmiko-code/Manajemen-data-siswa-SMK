@@ -14,6 +14,9 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     // Default redirect
     $routes->get('/', 'Dashboard::index');
     $routes->get('dashboard', 'Dashboard::index');
+    // Routes untuk Profil (Bisa diakses semua role yang login)
+    $routes->get('profile', 'Profile::index');
+    $routes->post('profile/update-password', 'Profile::updatePassword');
 
     $routes->group('', ['filter' => 'role:guru'], static function ($routes) {
         // Guru — Absen Mapel
@@ -114,6 +117,10 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
         $routes->post('import/siswa',   'Import::siswa');
         $routes->post('import/mapel',   'Import::mapel');
         $routes->post('import/jadwal',  'Import::jadwal');
+        $routes->post('import/user', 'Import::user'); 
+        // Routes untuk preview import user
+        $routes->get('user/import/preview', 'User::importPreview');
+        $routes->post('user/import/save', 'User::importSave');
         
     });
 });

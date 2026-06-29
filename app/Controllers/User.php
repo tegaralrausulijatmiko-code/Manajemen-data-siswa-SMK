@@ -243,4 +243,49 @@ class User extends BaseController
             'User berhasil dihapus.'
         );
     }
+
+        public function importPreview()
+    {
+        $data = session()->get('import_user_preview');
+        if (empty($data)) {
+            return redirect()->to(base_url('user'))->with('error', 'Sesi import telah berakhir. Silakan upload ulang.');
+        }
+        
+        return view('MasterUser/preview_import', ['preview_data' => $data]);
+    }
+
+    public function importSave()
+    {
+        $users = $this->request->getPost('users');
+        if (empty($users)) {
+            return redirect()->to(base_url('user'))->with('error', 'Tidak ada data untuk disimpan.');
+        }
+
+        $userModel = new \App\Models\UserModel();
+        $guruModel = new \App\Models\GuruModel();
+
+        // Map NIP ke id_guru
+        $guruMap = [];
+        foreach ($guruModel->findAll() as $g) {
+            $guruMap[$g['nip']] = $g['id_guru'];
+        }
+
+        $count = 0;
+        foreach ($users as $u) {
+            $userModel->insert([
+                'username'   => $u['nip'],
+                'nama'       => $u['nama'],
+                'password'   => password_hash($u['password'], PASSWORD_DEFAULT),
+                'role'       => $u['role'],
+                'id_guru'    => $guruMap[$u['nip']] ?? null,
+                'id_siswa'   => null,
+                'email'      => null,
+                'status'     => 'aktif',
+            ]);
+            $count++;
+        }
+
+        session()->remove('import_user_preview');
+        return redirect()->to(base_url('user'))->with('success', "$count akun user berhasil dibuat.");
+    }
 }

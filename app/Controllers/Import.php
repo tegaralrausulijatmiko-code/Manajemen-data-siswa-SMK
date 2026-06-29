@@ -23,6 +23,7 @@ class Import extends BaseController
             'siswa'   => 'template_import_siswa.xlsx',
             'mapel'   => 'template_import_mapel.xlsx',
             'jadwal'  => 'template_import_jadwal.xlsx',
+            'user'    => 'template_import_user.xlsx',
         ];
 
         if (! isset($map[$modul])) {
@@ -523,5 +524,68 @@ class Import extends BaseController
         }
 
         return redirect()->to(base_url($modul))->with('success', 'Import selesai: ' . $message);
+    }
+
+        // ─── Import User (Preview Flow) ───────────────────────────────────────────
+
+    public function user()
+    {
+        $file = $this->request->getFile('file_import');
+        if (! $this->isValidFile($file)) {
+            return redirect()->to(base_url('user'))->with('error', 'File tidak valid. Gunakan format .xlsx atau .csv.');
+        }
+
+        $rows = $this->readSpreadsheet($file);
+        $guruModel = new \App\Models\GuruModel();
+        $userModel = new \App\Models\UserModel();
+
+        // Cache data guru NIP -> Nama
+        $guruMap = [];
+        foreach ($guruModel->findAll() as $g) {
+            $guruMap[$g['nip']] = $g['nama_guru'];
+        }
+
+        $existingUsers = array_column($userModel->findAll(), 'username');
+
+        $previewData = [];
+        foreach ($rows as $row) {
+            $nip  = trim((string)($row[0] ?? ''));
+            $role = strtolower(trim((string)($row[1] ?? '')));
+            $pass = trim((string)($row[2] ?? ''));
+
+            if (empty($nip) && empty($role)) continue;
+
+            $status = 'OK';
+            $nama   = 'NIP Tidak Ditemukan';
+
+            if (!isset($guruMap[$nip])) {
+                $status = 'NIP tidak ada di Data Guru';
+            } else {
+                $nama = $guruMap[$nip];
+            }
+
+            if (!in_array($role, ['guru', 'bk'])) {
+                $status = 'Role harus guru/bk';
+            }
+
+            if (in_array($nip, $existingUsers)) {
+                $status = 'User sudah ada (Skip)';
+            }
+
+            if (empty($pass)) {
+                $status = 'Password kosong';
+            }
+
+            $previewData[] = [
+                'nip'     => $nip,
+                'nama'    => $nama,
+                'role'    => $role,
+                'password'=> $pass,
+                'status'  => $status
+            ];
+        }
+
+        session()->set('import_user_preview', $previewData);
+        return redirect()->to(base_url('user/import/preview'));
     }
 }

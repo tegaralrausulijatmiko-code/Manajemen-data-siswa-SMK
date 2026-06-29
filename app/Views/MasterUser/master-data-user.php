@@ -5,9 +5,13 @@
         <h3>Kelola Data User</h3>
         <div class="breadcrumb"><a href="<?= base_url('dashboard') ?>">Dashboard</a> / User</div>
     </div>
-    <a href="<?= base_url('user/tambah') ?>" class="btn btn-primary btn-sm">
-        <i class="ri-user-add-line"></i> Tambah User
-    </a>
+        <div style="display: flex; gap: 10px;">
+            <?= view('Template/partials/_modal_import', ['modul' => 'user']) ?>
+
+        <a href="<?= base_url('user/tambah') ?>" class="btn btn-primary btn-sm">
+            <i class="ri-user-add-line"></i> Tambah User
+        </a>
+    </div>
 </div>
 
 <div class="card">

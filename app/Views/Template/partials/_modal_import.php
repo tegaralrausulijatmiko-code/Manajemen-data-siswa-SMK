@@ -14,6 +14,8 @@ $labelMap = [
     'siswa'   => 'Siswa',
     'mapel'   => 'Mata Pelajaran',
     'jadwal'  => 'Jadwal Pelajaran',
+    'user'    => 'User',
+
 ];
 $label    = $labelMap[$modul] ?? ucfirst($modul);
 $actionUrl = base_url("import/$modul");
